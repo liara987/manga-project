@@ -1,0 +1,32 @@
+<c-carousel [animate]="true" transition="crossfade" [interval]="100000000">
+  <c-carousel-inner>
+    <c-carousel-item *ngFor="let slide of this.slides">
+      <img
+        [src]="slide.src"
+        alt="{{ slide.title }}"
+        class="d-block w-100 carousel-image"
+        loading="lazy"
+      />
+      <c-carousel-caption>
+        <aside class="side-content">
+          <img
+            class="carousel-logo"
+            [src]="slide.logo"
+            alt="{{ slide.title }} logo"
+          />
+          <p class="carousel-subtitle d-none d-md-block">{{ slide.subtitle }}</p>
+        </aside>
+      </c-carousel-caption>
+    </c-carousel-item>
+  </c-carousel-inner>
+  <c-carousel-control
+    [routerLink]
+    caption="Previous"
+    direction="prev"
+  ></c-carousel-control>
+  <c-carousel-control
+    [routerLink]
+    caption="Next"
+    direction="next"
+  ></c-carousel-control>
+</c-carousel>

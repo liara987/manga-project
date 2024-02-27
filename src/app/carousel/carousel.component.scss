@@ -1,0 +1,87 @@
+.carousel-image {
+  filter: brightness(50%);
+}
+
+c-carousel-control {
+  width: 2.5rem;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+c-carousel-caption {
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  left: 0;
+  bottom: 0;
+
+  .carousel-logo {
+    max-width: 8rem;
+  }
+
+  // Medium devices (tablets, 768px and up)
+  @media (min-width: 768px) {
+    display: unset;
+    left: 5%;
+    bottom: 10%;
+
+    .side-content,
+    .carousel-logo {
+      max-width: 15rem;
+    }
+
+    p {
+      padding-top: 1rem;
+      text-align: left;
+      font-size: 1rem;
+    }
+  }
+
+  // Large devices (desktops, 992px and up)
+  @media (min-width: 992px) {
+    bottom: 15%;
+
+    .side-content,
+    .carousel-logo {
+      max-width: 20rem;
+    }
+  }
+
+  // X-Large devices (large desktops, 1200px and up)
+  @media (min-width: 1200px) {
+    .side-content,
+    .carousel-logo {
+      max-width: 30rem;
+    }
+
+    p {
+      font-size: 1.2rem;
+    }
+  }
+
+  // XX-Large devices (larger desktops, 1400px and up)
+  @media (min-width: 1440px) {
+    bottom: 30%;
+
+    .carousel-logo {
+      max-width: 40rem;
+      max-height: 12rem;
+    }
+  }
+
+  @media (min-width: 2560px) {
+    .side-content {
+      .carousel-logo {
+        max-width: 55rem;
+        max-height: 21rem;
+      }
+
+      p {
+        width: 55rem;
+        font-size: 2.3rem;
+      }
+    }
+  }
+}
