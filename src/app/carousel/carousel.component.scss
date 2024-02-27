@@ -4,7 +4,7 @@
 
 c-carousel-control {
   width: 2.5rem;
-
+  
   &:hover {
     background-color: rgba(0, 0, 0, 0.1);
   }
@@ -25,7 +25,6 @@ c-carousel-caption {
     align-items: center;
   }
 
-  // Medium devices (tablets, 768px and up)
   @media (min-width: 768px) {
     left: 5%;
     bottom: 10%;
@@ -43,7 +42,6 @@ c-carousel-caption {
     }
   }
 
-  // Large devices (desktops, 992px and up)
   @media (min-width: 992px) {
     bottom: 15%;
 
@@ -53,7 +51,6 @@ c-carousel-caption {
     }
   }
 
-  // X-Large devices (large desktops, 1200px and up)
   @media (min-width: 1200px) {
     .side-content,
     .carousel-logo {
@@ -65,7 +62,6 @@ c-carousel-caption {
     }
   }
 
-  // XX-Large devices (larger desktops, 1400px and up)
   @media (min-width: 1440px) {
     bottom: 30%;
 
