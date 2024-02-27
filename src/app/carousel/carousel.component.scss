@@ -11,8 +11,6 @@ c-carousel-control {
 }
 
 c-carousel-caption {
-  display: flex;
-  justify-content: center;
   width: 100vw;
   left: 0;
   bottom: 0;
@@ -21,21 +19,27 @@ c-carousel-caption {
     max-width: 8rem;
   }
 
+  .side-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   // Medium devices (tablets, 768px and up)
   @media (min-width: 768px) {
-    display: unset;
     left: 5%;
     bottom: 10%;
 
     .side-content,
     .carousel-logo {
+      display: block;
       max-width: 15rem;
     }
 
     p {
       padding-top: 1rem;
       text-align: left;
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
   }
 

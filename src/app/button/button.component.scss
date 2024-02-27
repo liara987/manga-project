@@ -1,0 +1,29 @@
+.app-button{
+    text-transform: uppercase;
+    color: #141519;
+    background-color: #f47521;
+    font-family: Lato,Helvetica Neue,helvetica,sans-serif;
+    font-weight: 900;
+    border-radius: 0.2rem;
+    padding: 0.5rem;
+    font-size: 0.6rem;
+    margin-top: 0.5rem;
+    
+    @media (min-width: 768px) {
+        font-size: 0.8rem;
+        margin-top: 0.8rem;
+        padding: 0.8rem;
+    }
+    
+    @media (min-width: 992px){
+        font-size: 1rem;
+        margin-top: 1rem;
+        padding: 1rem;
+    }
+    
+    @media (min-width: 2560px){
+        font-size: 2rem;    
+        margin-top: 2rem;
+        padding: 2rem;
+    }
+}

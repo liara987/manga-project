@@ -1,4 +1,4 @@
-<c-carousel [animate]="true" transition="crossfade" [interval]="100000000">
+<c-carousel class="app-carousel" [animate]="true" transition="crossfade" [interval]="100000000">
   <c-carousel-inner>
     <c-carousel-item *ngFor="let slide of this.slides">
       <img
@@ -15,6 +15,7 @@
             alt="{{ slide.title }} logo"
           />
           <p class="carousel-subtitle d-none d-md-block">{{ slide.subtitle }}</p>
+          <app-button></app-button>
         </aside>
       </c-carousel-caption>
     </c-carousel-item>
