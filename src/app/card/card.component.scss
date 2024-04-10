@@ -5,8 +5,8 @@
   }
 
   &-image {
-    height: 25rem;
-    width: 15rem;
+    height: 13rem;
+    width: 8rem;
   }
 
   &-title {
@@ -16,44 +16,18 @@
     font-size: 1rem;
     padding: 0.5rem 0;
     margin-bottom: 2rem;
-  }
-
-  @media (min-width: 768px) {
-    &-title {
-      font-size: 1.3rem;
-    }
-  }
-
-  @media (min-width: 992px) {
-    &-title {
-      font-size: 1.6rem;
-    }
-
-    &-image {
-      height: 30rem;
-      width: 18rem;
-    }
-  }
-
-  @media (min-width: 1200px) {
-    &-title {
-      font-size: 2rem;
-    }
-
-    &-image {
-      height: 45rem;
-      width: 25rem;
-    }
+    width: 8rem;
   }
 
   @media (min-width: 2560px) {
     &-image {
-      height: 55rem;
-      width: 30rem;
+      height: 25rem;
+      width: 20rem;
     }
 
     &-title {
-      font-size: 3rem;
+      font-size: 2rem;
+      width: 20rem;
     }
   }
 }

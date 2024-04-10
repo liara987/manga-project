@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 export interface typeCard {
-  id: number;
+  id: string;
   image: string;
   title: string;
 }
