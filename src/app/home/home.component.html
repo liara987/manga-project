@@ -1,0 +1,15 @@
+<div class="content">
+  <app-navbar></app-navbar>
+  <app-carousel [slides]="this.slides"></app-carousel>
+  <div class="container">
+    <h2 class="heading">Read for free</h2>
+    <div class="cards">
+      @for (card of cardContent; track card.id) {
+      <div>
+        <app-card [cardContent]="card"></app-card>  
+        <img src={{image}} alt="">
+      </div>
+      }
+    </div>
+  </div>
+</div>
