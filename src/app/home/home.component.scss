@@ -20,6 +20,10 @@
     justify-items: center;
   }
 
+  app-card{
+    cursor: pointer;
+  }
+
   @media (min-width: 768px) {
     .heading {
       font-size: 2rem;

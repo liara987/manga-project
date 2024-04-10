@@ -7,6 +7,7 @@ import { NavbarComponent } from "../navbar/navbar.component";
 import { CarouselComponent } from "../carousel/carousel.component";
 import { CardComponent } from "../card/card.component";
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,8 @@ import { CommonModule } from '@angular/common';
     NavbarComponent,
     CarouselComponent,
     CardComponent,
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -29,7 +31,7 @@ export class HomeComponent {
   image!: string;
   mangaID!: string;
 
-  constructor(private http: HttpClient, private mangaService: GetMangaService) { }
+  constructor(private mangaService: GetMangaService) { }
 
   ngOnInit(): void {
     this.setCarouselItens()
@@ -41,9 +43,8 @@ export class HomeComponent {
         this.mangaService.getCoverFileName(this.coverId).subscribe((cover: any) => {
           this.fileName = cover.data.attributes.fileName
           this.mangaID = cover.data.relationships.find(({ type }: any) => type === 'manga').id
-          this.setCardContent(mangaItem.id, this.getMangaCover(this.mangaID, this.fileName), mangaItem.attributes.title.en)
+          this.setCardContent(mangaItem.id, this.mangaService.getMangaCover(this.mangaID, this.fileName), mangaItem.attributes.title.en)          
         });
-
       });
     });
   }
@@ -59,16 +60,6 @@ export class HomeComponent {
   getCoverId(mangaItem: any) {
     const coverID = mangaItem.relationships.find(({ type }: any) => type === 'cover_art')
     return coverID
-  }
-
-  getCoverFileName(coverId: string) {
-
-  }
-
-  getMangaCover(id_cover_art: string, file_name: string) {
-    const BASE_IMAGE_URL = 'https://uploads.mangadex.org'
-    return (`${BASE_IMAGE_URL}/covers/${id_cover_art}/${file_name}.256.jpg`)
-    // https://uploads.mangadex.org/covers/idManga/file_name.png
   }
 
   setCarouselItens() {
