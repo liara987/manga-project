@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CarouselModule } from '@coreui/angular';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -15,7 +15,9 @@ import { HomeComponent } from './home/home.component';
     RouterOutlet,
     HttpClientModule,
     CarouselModule,
-    HomeComponent
+    HomeComponent,
+    RouterLink, 
+    RouterLinkActive
   ],
   providers: [GetMangaService]
 })
