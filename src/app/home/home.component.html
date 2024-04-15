@@ -5,7 +5,7 @@
     <h2 class="heading">Read for free</h2>
     <div class="cards">
       @for (card of cardContent; track card.id) {
-      <a [routerLink]="['/manga', card.title]">
+      <a [routerLink]="['/manga', card.title, card.image]">
         <div>
           <app-card [cardContent]="card"></app-card>
         </div>
