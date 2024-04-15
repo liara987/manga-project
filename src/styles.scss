@@ -6,6 +6,9 @@
 body,
 p {
   margin: 0;
+  color: #fff;
+  font-family: Lato, Helvetica Neue, helvetica, sans-serif;
+  font-weight: 500;
 }
 
 a {
@@ -24,4 +27,11 @@ button {
   font-size: inherit;
   cursor: pointer;
   text-decoration: none;
+}
+
+.container{
+  margin: 0;
+  padding: 0 1.25rem;
+  width: 100vw;
+  max-width: none;
 }
