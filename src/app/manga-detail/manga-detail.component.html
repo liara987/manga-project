@@ -1,25 +1,47 @@
-<h2>Title</h2>
-<p>{{ mangaDetail.title }}</p>
+<div class="app-manga-detail">
+  <div class="container">
+    <picture>
+      <img cImg fluid src="{{ mangaDetail.image }}" fluid alt="" />
+      <figcaption>
+        <div class="app-manga-detail-info">
+          <div class="app-manga-detail-title">
+            <label>Title:</label>
+            <p>{{ mangaDetail.title }}</p>
+          </div>
 
-<h2>Status</h2>
-<p>{{ mangaDetail.status }}</p>
+          <div class="app-manga-detail-description">
+            <label>Description:</label>
+            <p>{{ mangaDetail.description }}</p>
+          </div>
 
-<h2>Description</h2>
-<p>{{ mangaDetail.description }}</p>
+          <div class="app-manga-detail-type">
+            <label>Type:</label>
+            <p>{{ mangaDetail.type }}</p>
+          </div>
 
-<h2>Type</h2>
-<p>{{ mangaDetail.type }}</p>
+          <div class="app-manga-detail-yearLauch">
+            <label>Lauching year:</label>
+            <p>{{ mangaDetail.yearLauch }}</p>
+          </div>
 
-<h2>Lauching year</h2>
-<p>{{ mangaDetail.yearLauch }}</p>
+          <div class="app-manga-detail-status">
+            <label>Status:</label>
+            <p>{{ mangaDetail.status }}</p>
+          </div>                    
 
-<h2>Status</h2>
-<p>{{ mangaDetail.status }}</p>
+          <div class="app-manga-detail-ageRating">
+            <label>Age rating:</label>
+            <p>{{ mangaDetail.ageRating }}</p>
+          </div>
 
-<h2>Age rating</h2>
-<p>{{ mangaDetail.ageRating }}</p>
-
-<h2>Genre</h2>
-@for (genre of teste; track genre) {
-    <p>{{ genre}}</p>
-}
+          <div class="app-manga-detail-genre">
+            <label>Genre: </label>
+            @for (genre of teste; track genre) {
+            <pre><span>{{ genre }}</span> </pre>
+            }
+          </div>
+        </div>
+      </figcaption>
+    </picture>
+  </div>
+</div>

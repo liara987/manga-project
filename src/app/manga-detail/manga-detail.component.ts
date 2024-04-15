@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GetMangaService } from '../services/getManga.service';
+import { ImgModule } from '@coreui/angular';
 
 export interface typeDetailManga {
   title: string,
@@ -17,22 +18,25 @@ export interface typeDetailManga {
 @Component({
   selector: 'app-manga-detail',
   standalone: true,
-  imports: [],
+  imports: [ImgModule],
   templateUrl: './manga-detail.component.html',
   styleUrl: './manga-detail.component.scss'
 })
 export class MangaDetailComponent {
   mangaDetail = <typeDetailManga>{};
   teste: string[] = []
+mangaImage: any;
 
   constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
 
   ngOnInit() {
     // this.mangaDetail.genre[0] = ''
     const mangaTitle: string = this.route.snapshot.paramMap.get('title') || '';
+    const mangaImage: string = this.route.snapshot.paramMap.get('image') || '';    
+    
     this.mangaDetail.title = mangaTitle
-    this.mangaService.getMangaByTitle(mangaTitle).subscribe((mangaDetailData: any) => {
-      console.log(mangaDetailData.data[0]);
+    this.mangaDetail.image = mangaImage
+    this.mangaService.getMangaByTitle(mangaTitle).subscribe((mangaDetailData: any) => {      
       this.mangaDetail.status = mangaDetailData.data[0].attributes.status
       this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
       this.mangaDetail.type = mangaDetailData.data[0].type
