@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GetMangaService } from '../services/getManga.service';
 import { ImgModule } from '@coreui/angular';
+import { CommonModule } from '@angular/common';
 
 export interface typeDetailManga {
+  id: string,
   title: string,
   image: string,
   description: string,
@@ -18,34 +20,47 @@ export interface typeDetailManga {
 @Component({
   selector: 'app-manga-detail',
   standalone: true,
-  imports: [ImgModule],
   templateUrl: './manga-detail.component.html',
-  styleUrl: './manga-detail.component.scss'
+  styleUrl: './manga-detail.component.scss',
+  imports: [ImgModule, CommonModule]
 })
 export class MangaDetailComponent {
   mangaDetail = <typeDetailManga>{};
-  teste: string[] = []
-mangaImage: any;
+  genreList: string[] = []
+  chapterList: any[] = []
 
   constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
 
   ngOnInit() {
-    // this.mangaDetail.genre[0] = ''
-    const mangaTitle: string = this.route.snapshot.paramMap.get('title') || '';
-    const mangaImage: string = this.route.snapshot.paramMap.get('image') || '';    
-    
-    this.mangaDetail.title = mangaTitle
-    this.mangaDetail.image = mangaImage
-    this.mangaService.getMangaByTitle(mangaTitle).subscribe((mangaDetailData: any) => {      
+    const mangaRouterTitle: string = this.route.snapshot.paramMap.get('title') || '';
+    const mangaRouterImage: string = this.route.snapshot.paramMap.get('image') || '';
+
+    this.mangaDetail.title = mangaRouterTitle
+    this.mangaDetail.image = mangaRouterImage
+
+    this.getMangaByTitle(mangaRouterTitle)    
+  }
+
+  getMangaChapterList(id_manga: string) {
+    this.mangaService.getMangaChapterList(id_manga).subscribe((mangaDetailData: any) => {
+      this.chapterList = mangaDetailData.data;      
+    })
+  }
+  
+  getMangaByTitle(mangaRouterTitle: string) {
+    this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe((mangaDetailData: any) => {
       this.mangaDetail.status = mangaDetailData.data[0].attributes.status
+      this.mangaDetail.id = mangaDetailData.data[0].id
       this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
       this.mangaDetail.type = mangaDetailData.data[0].type
       this.mangaDetail.yearLauch = mangaDetailData.data[0].attributes.year
       this.mangaDetail.ageRating = mangaDetailData.data[0].attributes.contentRating
 
-      mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {        
-        this.teste[i] = element.attributes.name.en                
+      mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {
+        this.genreList[i] = element.attributes.name.en
       });
+
+      this.getMangaChapterList(this.mangaDetail.id)
     });
   }
 }
