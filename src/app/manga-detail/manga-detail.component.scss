@@ -7,6 +7,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    margin-bottom: 1rem;
 
     img {
       margin-right: 0;
@@ -41,6 +42,14 @@
       span {
         padding-right: 0;
       }
+    }
+  }
+
+  &-chapter-list {
+    li {
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
     }
   }
 
