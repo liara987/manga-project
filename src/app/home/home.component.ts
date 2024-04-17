@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { typeSlides } from "../carousel/carousel.component";
 import { typeCard } from "../card/card.component";
-import { HttpClient } from '@angular/common/http';
 import { GetMangaService } from '../services/getManga.service';
 import { NavbarComponent } from "../navbar/navbar.component";
 import { CarouselComponent } from "../carousel/carousel.component";
