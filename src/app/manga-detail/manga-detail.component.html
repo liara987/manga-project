@@ -27,7 +27,7 @@
           <div class="app-manga-detail-status">
             <label>Status:</label>
             <p>{{ mangaDetail.status }}</p>
-          </div>                    
+          </div>
 
           <div class="app-manga-detail-ageRating">
             <label>Age rating:</label>
@@ -36,12 +36,26 @@
 
           <div class="app-manga-detail-genre">
             <label>Genre: </label>
-            @for (genre of teste; track genre) {
+            @for (genre of genreList; track genre) {
             <pre><span>{{ genre }}</span> </pre>
             }
           </div>
         </div>
       </figcaption>
     </picture>
+
+    <ul class="app-manga-detail-chapter-list">
+      @for (chapter of chapterList; track $index) {
+      <span> Volume - {{ chapter.attributes.volume || 0 }}</span>
+      <li>
+        <span>
+          {{ chapter.type | titlecase }}: {{ chapter.attributes.chapter || 0 }}
+        </span>
+        <span> Pages: {{ chapter.attributes.pages }} </span>
+        <span> Publishe At: {{ chapter.attributes.publishAt | date }} </span>
+      </li>
+      <hr />
+      }
+    </ul>
   </div>
 </div>
