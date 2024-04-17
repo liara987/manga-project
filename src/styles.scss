@@ -15,8 +15,17 @@ a {
   text-decoration: none;
 }
 
-body{
-    background-color: black;
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style-type: none;
+}
+
+body {
+  background-color: black;
 }
 
 button {
@@ -29,7 +38,7 @@ button {
   text-decoration: none;
 }
 
-.container{
+.container {
   margin: 0;
   padding: 0 1.25rem;
   width: 100vw;
