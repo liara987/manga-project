@@ -46,4 +46,12 @@ export class GetMangaService {
 
         return this.http.get(`${BASE_URL}/manga/${id_manga}/feed`, this.options)
     }
+
+    public getChapterImageData(id_chapter: string): Observable<any> {
+        return this.http.get(`${BASE_URL}/at-home/server/${id_chapter}`)
+    }
+
+    public getChapterImage( hash: string, image_chapter_data: string): string {
+        return (`${BASE_IMAGE_URL}/data/${hash}/${image_chapter_data}`)
+    }
 }
