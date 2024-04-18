@@ -48,11 +48,13 @@
       @for (chapter of chapterList; track $index) {
       <span> Volume - {{ chapter.attributes.volume || 0 }}</span>
       <li>
-        <span>
-          {{ chapter.type | titlecase }}: {{ chapter.attributes.chapter || 0 }}
-        </span>
-        <span> Pages: {{ chapter.attributes.pages }} </span>
-        <span> Publishe At: {{ chapter.attributes.publishAt | date }} </span>
+        <a [routerLink]="['/chapter', chapter.id]">
+          <span>
+            {{ chapter.type | titlecase }}: {{ chapter.attributes.chapter || 0 }}
+          </span>
+          <span> Pages: {{ chapter.attributes.pages }} </span>
+          <span> Publishe At: {{ chapter.attributes.publishAt | date }} </span>
+        </a>
       </li>
       <hr />
       }
