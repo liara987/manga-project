@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GetMangaService } from '../services/getManga.service';
 import { ImgModule } from '@coreui/angular';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 export interface typeDetailManga {
   id: string,
@@ -22,7 +23,7 @@ export interface typeDetailManga {
   standalone: true,
   templateUrl: './manga-detail.component.html',
   styleUrl: './manga-detail.component.scss',
-  imports: [ImgModule, CommonModule]
+  imports: [ImgModule, CommonModule, RouterModule]
 })
 export class MangaDetailComponent {
   mangaDetail = <typeDetailManga>{};
