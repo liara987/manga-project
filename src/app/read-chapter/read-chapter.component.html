@@ -1,0 +1,17 @@
+<div class="app-read-chapter">
+  @for (image of images; track $index) {
+  <figure>
+    <figcaption>{{ $index + 1 }}</figcaption>
+    <img cImg fluid src="{{ image }}" alt="" />
+  </figure>
+  }
+  <button (click)="onClickGoToTop()">
+    <svg
+      [cIcon]="icons.cilArrowThickTop"
+      name="cilArrowThickTop"
+      size="xl"
+      title="Numbered List Icon"
+    ></svg>
+    go to top
+  </button>
+</div>
