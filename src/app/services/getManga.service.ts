@@ -40,7 +40,7 @@ export class GetMangaService {
         this.options = {
             params: {
                 'translatedLanguage[]': this.languages,
-                'order[volume]': 'asc',
+                'order[chapter]': 'asc',
                 'includeEmptyPages': 0
             }
         };
