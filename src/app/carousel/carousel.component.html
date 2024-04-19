@@ -1,6 +1,12 @@
-<c-carousel class="app-carousel" [animate]="false" transition="crossfade" [interval]="0">
+<c-carousel
+  class="app-carousel"
+  [animate]="false"
+  transition="crossfade"
+  [interval]="0"
+>
   <c-carousel-inner>
-    <c-carousel-item *ngFor="let slide of this.slides">
+    @for (slide of slides; track $index) {
+    <c-carousel-item>
       <img
         [src]="slide.src"
         alt="{{ slide.title }}"
@@ -14,11 +20,16 @@
             [src]="slide.logo"
             alt="{{ slide.title }} logo"
           />
-          <p class="carousel-subtitle d-none d-md-block">{{ slide.subtitle }}</p>
-          <app-button text="read now"></app-button>
+          <p class="carousel-subtitle d-none d-md-block">
+            {{ slide.subtitle }}
+          </p>
+          <a [routerLink]="['/manga', slide.title, slide.cover]">
+            <app-button text="read now"></app-button>
+          </a>
         </aside>
       </c-carousel-caption>
     </c-carousel-item>
+    }
   </c-carousel-inner>
   <c-carousel-control
     [routerLink]
