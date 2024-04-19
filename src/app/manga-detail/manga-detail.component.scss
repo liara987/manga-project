@@ -55,6 +55,12 @@
     }
   }
 
+  &-pagination{
+    display: flex;
+    justify-content: center;
+  }
+
+
   @media (min-width: 768px) {
     picture {
       flex-direction: row;

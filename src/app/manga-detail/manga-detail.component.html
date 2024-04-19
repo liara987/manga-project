@@ -44,23 +44,49 @@
       </figcaption>
     </picture>
 
-    <ul class="app-manga-detail-chapter-list">
-      @for (chapter of chapterList; track $index) {
-      <li>
-        <a [routerLink]="['/chapter', chapter.id]">
-          @if (chapter.attributes.volume) {
-          <span> Volume - {{ chapter.attributes.volume }} </span>
-          }
-          <span>
-            {{ chapter.type | titlecase }}:
-            {{ chapter.attributes.chapter || "none" }}
-          </span>
-          <span> Pages: {{ chapter.attributes.pages }} </span>
-          <span> Published At: {{ chapter.attributes.publishAt | date }} </span>
-        </a>
-      </li>
-      <hr />
-      }
-    </ul>
+    <section>
+      <ul class="app-manga-detail-chapter-list">
+        @for (chapter of chapterList; track $index) {
+        <li>
+          <a [routerLink]="['/chapter', chapter.id]">
+            @if (chapter.attributes.volume) {
+            <span> Volume - {{ chapter.attributes.volume }} </span>
+            }
+            <span>
+              {{ chapter.type | titlecase }}:
+              {{ chapter.attributes.chapter || "none" }}
+            </span>
+            <span> Pages: {{ chapter.attributes.pages }} </span>
+            <span>
+              Published At: {{ chapter.attributes.publishAt | date }}
+            </span>
+          </a>
+        </li>
+        <hr />
+        }
+      </ul>
+    </section>
+
+    @if (chapterList.length > 0) {
+    <footer class="app-manga-detail-pagination">
+      <c-pagination aria-label="Page navigation example">
+        <li cPageItem (click)="previousPage()">
+          <a cPageLink>Previous</a>
+        </li>
+        <li cPageItem>
+          <a cPageLink (click)="setPage(1)">1</a>
+        </li>
+        <li cPageItem>
+          <a cPageLink (click)="setPage(50)">2</a>
+        </li>
+        <li cPageItem>
+          <a cPageLink (click)="setPage(100)">3</a>
+        </li>
+        <li cPageItem (click)="nextPage()">
+          <a cPageLink>Next</a>
+        </li>
+      </c-pagination>
+    </footer>
+    }
   </div>
 </div>
