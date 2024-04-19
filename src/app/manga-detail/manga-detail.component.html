@@ -48,18 +48,15 @@
       @for (chapter of chapterList; track $index) {
       <li>
         <a [routerLink]="['/chapter', chapter.id]">
+          @if (chapter.attributes.volume) {
+          <span> Volume - {{ chapter.attributes.volume }} </span>
+          }
           <span>
-            Volume - {{ chapter.attributes.volume || "none" }}
+            {{ chapter.type | titlecase }}:
+            {{ chapter.attributes.chapter || "none" }}
           </span>
-          <span>
-            {{ chapter.type | titlecase }}: {{ chapter.attributes.chapter || "none" }}
-          </span>
-          <span>
-            Pages: {{ chapter.attributes.pages }}
-          </span>
-          <span>
-            Published At: {{ chapter.attributes.publishAt | date }}
-          </span>
+          <span> Pages: {{ chapter.attributes.pages }} </span>
+          <span> Published At: {{ chapter.attributes.publishAt | date }} </span>
         </a>
       </li>
       <hr />
