@@ -3,6 +3,9 @@
   background-color: #23252b;
   display: flex;
   align-items: center;
+  position: fixed;  
+  width: 100vw;
+  z-index: 2;
 
   a {
     display: flex;
