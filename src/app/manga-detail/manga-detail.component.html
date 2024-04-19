@@ -46,14 +46,20 @@
 
     <ul class="app-manga-detail-chapter-list">
       @for (chapter of chapterList; track $index) {
-      <span> Volume - {{ chapter.attributes.volume || 0 }}</span>
       <li>
         <a [routerLink]="['/chapter', chapter.id]">
           <span>
-            {{ chapter.type | titlecase }}: {{ chapter.attributes.chapter || 0 }}
+            Volume - {{ chapter.attributes.volume || "none" }}
           </span>
-          <span> Pages: {{ chapter.attributes.pages }} </span>
-          <span> Publishe At: {{ chapter.attributes.publishAt | date }} </span>
+          <span>
+            {{ chapter.type | titlecase }}: {{ chapter.attributes.chapter || "none" }}
+          </span>
+          <span>
+            Pages: {{ chapter.attributes.pages }}
+          </span>
+          <span>
+            Published At: {{ chapter.attributes.publishAt | date }}
+          </span>
         </a>
       </li>
       <hr />
