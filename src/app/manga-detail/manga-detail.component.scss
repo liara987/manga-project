@@ -46,9 +46,10 @@
   }
 
   &-chapter-list {
-    li {
+    a {
       margin-top: 1rem;
       display: flex;
+      justify-content: space-around;
       flex-direction: column;
     }
   }
@@ -60,6 +61,12 @@
 
       img {
         margin: 0.5rem 0.5rem 0 0;
+      }
+    }
+
+    &-chapter-list {
+      a {
+        flex-direction: row;
       }
     }
   }
