@@ -39,7 +39,7 @@ export class MangaDetailComponent {
     this.mangaDetail.title = mangaRouterTitle
     this.mangaDetail.image = mangaRouterImage
 
-    this.getMangaByTitle(mangaRouterTitle)    
+    this.setMangaByTitle(mangaRouterTitle)    
   }
 
   getMangaChapterList(id_manga: string) {
@@ -48,7 +48,7 @@ export class MangaDetailComponent {
     })
   }
   
-  getMangaByTitle(mangaRouterTitle: string) {
+  setMangaByTitle(mangaRouterTitle: string) {
     this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe((mangaDetailData: any) => {
       this.mangaDetail.status = mangaDetailData.data[0].attributes.status
       this.mangaDetail.id = mangaDetailData.data[0].id
