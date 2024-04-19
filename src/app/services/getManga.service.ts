@@ -17,7 +17,7 @@ export class GetMangaService {
         this.options = {
             params: {
                 'availableTranslatedLanguage[]': 'en',
-                'limit': '100',
+                'limit': '20',
             }
         };
         return this.http.get(`${BASE_URL}/manga`, this.options)
@@ -40,7 +40,8 @@ export class GetMangaService {
         this.options = {
             params: {
                 'translatedLanguage[]': this.languages,
-                'order[createdAt]': 'asc',
+                'order[volume]': 'asc',
+                'includeEmptyPages': 0
             }
         };
 
@@ -51,7 +52,12 @@ export class GetMangaService {
         return this.http.get(`${BASE_URL}/at-home/server/${id_chapter}`)
     }
 
-    public getChapterImage( hash: string, image_chapter_data: string): string {
+    public getChapterImage(hash: string, image_chapter_data: string): string {
         return (`${BASE_IMAGE_URL}/data/${hash}/${image_chapter_data}`)
+    }
+
+    public getCoverId(mangaItem: { relationships: Array<any> }): string {
+        const coverID = mangaItem.relationships.find(({ type }: any) => type === 'cover_art').id
+        return coverID
     }
 }
