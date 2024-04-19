@@ -36,12 +36,14 @@ export class GetMangaService {
         return (`${BASE_IMAGE_URL}/covers/${id_cover_art}/${file_name}.256.jpg`)
     }
 
-    public getMangaChapterList(id_manga: string): Observable<any> {
+    public getMangaChapterList(id_manga: string, page: number): Observable<any> {
         this.options = {
             params: {
                 'translatedLanguage[]': this.languages,
                 'order[chapter]': 'asc',
-                'includeEmptyPages': 0
+                'includeEmptyPages': 0,
+                limit: 50,
+                offset: page
             }
         };
 
