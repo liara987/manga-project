@@ -68,25 +68,23 @@
     </section>
 
     @if (chapterList.length > 0) {
-    <footer class="app-manga-detail-pagination">
-      <c-pagination aria-label="Page navigation example">
-        <li cPageItem (click)="previousPage()">
-          <a cPageLink>Previous</a>
-        </li>
-        <li cPageItem>
-          <a cPageLink (click)="setPage(1)">1</a>
-        </li>
-        <li cPageItem>
-          <a cPageLink (click)="setPage(50)">2</a>
-        </li>
-        <li cPageItem>
-          <a cPageLink (click)="setPage(100)">3</a>
-        </li>
-        <li cPageItem (click)="nextPage()">
-          <a cPageLink>Next</a>
-        </li>
-      </c-pagination>
-    </footer>
+    <c-pagination align="center" aria-label="Page navigation example">
+      <li cPageItem (click)="previousPage()">
+        <a cPageLink>Previous</a>
+      </li>
+      <li cPageItem>
+        <a cPageLink (click)="setPage(1)">1</a>
+      </li>
+      <li cPageItem>
+        <a cPageLink (click)="setPage(50)">2</a>
+      </li>
+      <li cPageItem>
+        <a cPageLink (click)="setPage(100)">3</a>
+      </li>
+      <li cPageItem (click)="nextPage()">
+        <a cPageLink>Next</a>
+      </li>
+    </c-pagination>
     }
   </div>
 </div>
