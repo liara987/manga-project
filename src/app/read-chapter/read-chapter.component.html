@@ -5,13 +5,6 @@
     <img cImg fluid src="{{ image }}" alt="" />
   </figure>
   }
-  <button (click)="onClickGoToTop()">
-    <svg
-      [cIcon]="icons.cilArrowThickTop"
-      name="cilArrowThickTop"
-      size="xl"
-      title="Numbered List Icon"
-    ></svg>
-    go to top
-  </button>
+
+  <app-go-to-top (click)="onClickGoToTop()"></app-go-to-top>
 </div>
