@@ -30,11 +30,6 @@
             <p>{{ mangaDetail.status }}</p>
           </div>
 
-          <div class="app-manga-detail-ageRating">
-            <label>Age rating:</label>
-            <p>{{ mangaDetail.ageRating }}</p>
-          </div>
-
           <div class="app-manga-detail-genre">
             <label>Genre: </label>
             @for (genre of genreList; track genre) {
@@ -44,8 +39,9 @@
         </div>
       </figcaption>
     </picture>
-  }
+    }
     <section class="app-manga-detail-list-header">
+      @if (showMangaList || showMangaData) {
       <div class="align-order">
         <button
           class="app-manga-detail-order"
@@ -67,9 +63,8 @@
           ></svg>
           }
         </button>
+      </div>
 
-      </div>      
-      @if (showMangaList || showMangaData) {
       <ul class="app-manga-detail-chapter-list">
         @for (chapter of chapterList; track $index) {
         <li>
@@ -91,13 +86,12 @@
         }
       </ul>
       } @else {
-        <div class="center-loading">
-          <c-spinner color="light"></c-spinner>
-        </div>
+      <div class="center-loading">
+        <c-spinner color="light"></c-spinner>
+      </div>
       }
-    </section>
-
-    @if (chapterList.length > 0) {
+    </section>    
+    @if (chapterList.length > 0 && chapterList.length > 96) {      
     <c-pagination align="center" aria-label="Page navigation example">
       <li cPageItem (click)="previousPage()">
         <a cPageLink>Previous</a>
