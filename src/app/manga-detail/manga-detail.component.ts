@@ -23,7 +23,6 @@ export interface typeDetailManga {
   genre: string[],
   yearLauch: string,
   status: string,
-  ageRating: string,
   chapterList?: [string],
 }
 
@@ -69,40 +68,47 @@ export class MangaDetailComponent {
   }
 
   getMangaChapterList(id_manga: string) {
-    this.mangaService.getMangaChapterList(id_manga, this.page, this.orderAsc ? 'asc' : 'desc').subscribe({
-      next: (mangaDetailData: any) => {
-        if (mangaDetailData.data.length < 96) {
-          this.page = length
-          this.limite = length
-        }
+    this.mangaService.getMangaChapterList(
+      id_manga,
+      this.page,
+      this.orderAsc ? 'asc' : 'desc')
+      .subscribe({
+        next: (mangaDetailData: any) => {
+          if (mangaDetailData.total < 96) {
+            this.page = mangaDetailData.total
+          }
 
-        this.chapterList = mangaDetailData.data;
-      },
-      error: (error) => { console.error(error) },
-      complete: () => { this.showMangaList = true }
-    })
+          this.chapterList = mangaDetailData.data;
+        },
+        error: (error) => { console.error(error) },
+        complete: () => { this.showMangaList = true }
+      })
   }
 
   setMangaByTitle(mangaRouterTitle: string) {
     this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe({
       next: (mangaDetailData: any) => {
-      this.mangaDetail.status = mangaDetailData.data[0].attributes.status
-      this.mangaDetail.id = mangaDetailData.data[0].id
+        this.mangaDetail.status = mangaDetailData.data[0].attributes.status
+        this.mangaDetail.id = mangaDetailData.data[0].id
 
-      this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
-      this.mangaDetail.type = mangaDetailData.data[0].type
-      this.mangaDetail.yearLauch = mangaDetailData.data[0].attributes.year
-      this.mangaDetail.ageRating = mangaDetailData.data[0].attributes.contentRating
+        this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
+        this.mangaDetail.type = mangaDetailData.data[0].type
+        this.mangaDetail.yearLauch = mangaDetailData.data[0].attributes.year
 
-      mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {
-        this.genreList[i] = element.attributes.name.en
-      });
+        mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {
+          this.genreList[i] = element.attributes.name.en
+        });
 
-      this.getMangaChapterList(this.mangaDetail.id)
-    },
-    error: (error) =>{console.error(error)},
-    complete: () => {this.showMangaData = true}
-  });
+        this.getMangaChapterList(this.mangaDetail.id)
+      },
+      error: (error) => { console.error(error) },
+      complete: () => { this.showMangaData = true }
+    });
+  }
+
+  toggleOrder() {
+    this.orderAsc = !this.orderAsc
+    this.getMangaChapterList(this.mangaDetail.id)
   }
 
   nextPage() {
@@ -117,11 +123,6 @@ export class MangaDetailComponent {
 
   previousPage() {
     this.page -= 96
-    this.getMangaChapterList(this.mangaDetail.id)
-  }
-
-  toggleOrder() {
-    this.orderAsc = !this.orderAsc
     this.getMangaChapterList(this.mangaDetail.id)
   }
 }
