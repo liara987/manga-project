@@ -12,6 +12,13 @@
   grid-template-rows: 1fr;
   gap: 1rem;
   justify-items: center;
+  margin-top: 1rem;
+}
+
+.center-loading{
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
 }
 
 app-card {
@@ -24,6 +31,7 @@ app-card {
   }
 
   .cards {
+    margin-top: 2rem;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   }
 }

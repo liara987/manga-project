@@ -1,6 +1,7 @@
 <div class="content">
   <app-carousel></app-carousel>
   <div class="container">
+    @if (showMangaList) {
     <div class="cards">
       @for (card of cardContent; track card.id) {
       <a [routerLink]="['/manga', card.title, card.image]">
@@ -10,5 +11,10 @@
       </a>
       }
     </div>
+    } @else {
+      <div class="center-loading">
+        <c-spinner color="light"></c-spinner>
+      </div>
+    }
   </div>
 </div>

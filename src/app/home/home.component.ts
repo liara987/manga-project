@@ -6,6 +6,7 @@ import { CarouselComponent } from "../carousel/carousel.component";
 import { CardComponent } from "../card/card.component";
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { SpinnerModule } from '@coreui/angular';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,8 @@ import { RouterModule } from '@angular/router';
     CarouselComponent,
     CardComponent,
     CommonModule,
-    RouterModule
+    RouterModule,
+    SpinnerModule
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -27,24 +29,30 @@ export class HomeComponent {
   coverId!: string;
   image!: string;
   mangaID!: string;
+  showMangaList = false;
 
   constructor(private mangaService: GetMangaService) { }
 
   ngOnInit(): void {
-
-    this.mangaService.getAllMangas().subscribe((mangaData: any) => {
-      mangaData.data.forEach((mangaItem: any) => {
-        this.coverId = this.mangaService.getCoverId(mangaItem)
-        this.mangaService.getCoverFileName(this.coverId).subscribe((cover: any) => {
-          this.fileName = cover.data.attributes.fileName
-          this.mangaID = cover.data.relationships.find(({ type }: any) => type === 'manga').id
-          this.setCardContent(
-            mangaItem.id,
-            this.mangaService.getMangaCover(this.mangaID, this.fileName),
-            mangaItem.attributes.title.en
-          )
+    this.mangaService.getAllMangas().subscribe({
+      next: (mangaData: any) => {
+        mangaData.data.forEach((mangaItem: any) => {
+          this.coverId = this.mangaService.getCoverId(mangaItem)
+          this.mangaService.getCoverFileName(this.coverId).subscribe((cover: any) => {
+            this.fileName = cover.data.attributes.fileName
+            this.mangaID = cover.data.relationships.find(({ type }: any) => type === 'manga').id
+            this.setCardContent(
+              mangaItem.id,
+              this.mangaService.getMangaCover(this.mangaID, this.fileName),
+              mangaItem.attributes.title.en
+            )
+          });
         });
-      });
+      },
+      error: (error) => {
+        console.error(error);
+      },
+      complete: () => { this.showMangaList = true }
     });
   }
 
