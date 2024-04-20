@@ -12,9 +12,17 @@
       }
     </div>
     } @else {
-      <div class="center-loading">
-        <c-spinner color="light"></c-spinner>
-      </div>
+    <div class="center-loading">
+      <c-spinner color="light"></c-spinner>
+    </div>
+    } @if (cardContent.length > 0) {
+    <div class="show-more" cPageItem (click)="showMore()">
+      <svg
+        [cIcon]="icons.cilChevronCircleDownAlt"
+        size="3xl"
+        title="Arrow Circle Bottom Icon"
+      ></svg>
+    </div>
     }
   </div>
 </div>
