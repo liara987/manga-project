@@ -4,7 +4,13 @@ import { GetMangaService } from '../services/getManga.service';
 import { ImgModule } from '@coreui/angular';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink } from '@angular/router';
-import { PageItemDirective, PageLinkDirective, PaginationComponent, ButtonModule } from '@coreui/angular';
+import {
+  PageItemDirective,
+  PageLinkDirective,
+  PaginationComponent,
+  ButtonModule,
+  SpinnerModule,
+} from '@coreui/angular';
 import { cilArrowCircleTop, cilArrowCircleBottom } from '@coreui/icons';
 import { IconDirective } from '@coreui/icons-angular';
 
@@ -35,7 +41,8 @@ export interface typeDetailManga {
     PaginationComponent,
     PageItemDirective,
     PageLinkDirective,
-    RouterLink
+    RouterLink,
+    SpinnerModule,
   ]
 })
 export class MangaDetailComponent {
@@ -46,6 +53,8 @@ export class MangaDetailComponent {
   limite = 96
   orderAsc = true
   icons = { cilArrowCircleTop, cilArrowCircleBottom };
+  showMangaList = false
+  showMangaData = false
 
   constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
 
@@ -70,12 +79,13 @@ export class MangaDetailComponent {
         this.chapterList = mangaDetailData.data;
       },
       error: (error) => { console.error(error) },
-      complete: () => {}
+      complete: () => { this.showMangaList = true }
     })
   }
 
   setMangaByTitle(mangaRouterTitle: string) {
-    this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe((mangaDetailData: any) => {
+    this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe({
+      next: (mangaDetailData: any) => {
       this.mangaDetail.status = mangaDetailData.data[0].attributes.status
       this.mangaDetail.id = mangaDetailData.data[0].id
 
@@ -89,11 +99,15 @@ export class MangaDetailComponent {
       });
 
       this.getMangaChapterList(this.mangaDetail.id)
-    });
+    },
+    error: (error) =>{console.error(error)},
+    complete: () => {this.showMangaData = true}
+  });
   }
 
   nextPage() {
-    this.page += 96    
+    this.page += 96
+    this.getMangaChapterList(this.mangaDetail.id)
   }
 
   setPage(pageNumber: number) {
@@ -105,8 +119,8 @@ export class MangaDetailComponent {
     this.page -= 96
     this.getMangaChapterList(this.mangaDetail.id)
   }
-  
-  toggleOrder(){
+
+  toggleOrder() {
     this.orderAsc = !this.orderAsc
     this.getMangaChapterList(this.mangaDetail.id)
   }

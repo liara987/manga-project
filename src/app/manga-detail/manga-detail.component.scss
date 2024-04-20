@@ -63,11 +63,30 @@
       flex-direction: column;
     }
   }
+
+  &-list-header {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+
   .page-item {
     --cui-pagination-bg: #23252b !important;
     .page-link {
       --cui-pagination-color: white !important;
     }
+  }
+
+  .center-loading {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .align-order {
+    display: flex;
+    justify-content: flex-end;
   }
 
   @media (min-width: 768px) {

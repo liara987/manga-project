@@ -1,5 +1,6 @@
 <div class="app-manga-detail">
   <div class="container">
+    @if (showMangaList) {
     <picture>
       <img cImg fluid src="{{ mangaDetail.image }}" fluid alt="" />
       <figcaption>
@@ -43,10 +44,15 @@
         </div>
       </figcaption>
     </picture>
-
-    <section>
-      <ul class="app-manga-detail-chapter-list">
-        <button class="app-manga-detail-order" (click)="toggleOrder()" cButton color="dark">
+  }
+    <section class="app-manga-detail-list-header">
+      <div class="align-order">
+        <button
+          class="app-manga-detail-order"
+          (click)="toggleOrder()"
+          cButton
+          color="dark"
+        >
           @if (!orderAsc) { Increasing
           <svg
             [cIcon]="icons.cilArrowCircleTop"
@@ -61,6 +67,10 @@
           ></svg>
           }
         </button>
+
+      </div>      
+      @if (showMangaList || showMangaData) {
+      <ul class="app-manga-detail-chapter-list">
         @for (chapter of chapterList; track $index) {
         <li>
           <a [routerLink]="['/chapter', chapter.id]">
@@ -80,6 +90,11 @@
         <hr />
         }
       </ul>
+      } @else {
+        <div class="center-loading">
+          <c-spinner color="light"></c-spinner>
+        </div>
+      }
     </section>
 
     @if (chapterList.length > 0) {
