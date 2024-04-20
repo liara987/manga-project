@@ -46,6 +46,21 @@
 
     <section>
       <ul class="app-manga-detail-chapter-list">
+        <button class="app-manga-detail-order" (click)="toggleOrder()" cButton color="dark">
+          @if (!orderAsc) { Increasing
+          <svg
+            [cIcon]="icons.cilArrowCircleTop"
+            size="lg"
+            title="Arrow Circle Top Icon"
+          ></svg>
+          } @else { Descending
+          <svg
+            [cIcon]="icons.cilArrowCircleBottom"
+            size="lg"
+            title="Arrow Circle Bottom Icon"
+          ></svg>
+          }
+        </button>
         @for (chapter of chapterList; track $index) {
         <li>
           <a [routerLink]="['/chapter', chapter.id]">
@@ -76,10 +91,10 @@
         <a cPageLink (click)="setPage(1)">1</a>
       </li>
       <li cPageItem>
-        <a cPageLink (click)="setPage(50)">2</a>
+        <a cPageLink (click)="setPage(96)">2</a>
       </li>
       <li cPageItem>
-        <a cPageLink (click)="setPage(100)">3</a>
+        <a cPageLink (click)="setPage(192)">3</a>
       </li>
       <li cPageItem (click)="nextPage()">
         <a cPageLink>Next</a>

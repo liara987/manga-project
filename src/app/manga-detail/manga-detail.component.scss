@@ -46,6 +46,15 @@
     }
   }
 
+  &-order {
+    display: flex;
+    align-items: flex-end;
+
+    svg {
+      margin-left: 0.5rem;
+    }
+  }
+
   &-chapter-list {
     a {
       margin-top: 1rem;
