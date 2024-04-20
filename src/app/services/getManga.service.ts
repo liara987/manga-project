@@ -13,11 +13,15 @@ export class GetMangaService {
 
     constructor(private http: HttpClient) { }
 
-    public getAllMangas(): Observable<any> {
+    public getAllMangas(page: number): Observable<any> {
         this.options = {
             params: {
                 'availableTranslatedLanguage[]': 'en',
-                'limit': '20',
+                'limit': 96,
+                'offset': page,
+                'order[latestUploadedChapter]': 'desc',
+                'hasAvailableChapters': "true",
+                "contentRating[]":["suggestive", "safe"]
             }
         };
         return this.http.get(`${BASE_URL}/manga`, this.options)
