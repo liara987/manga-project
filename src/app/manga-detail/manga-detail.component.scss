@@ -54,6 +54,12 @@
       flex-direction: column;
     }
   }
+  .page-item {
+    --cui-pagination-bg: #23252b !important;
+    .page-link {
+      --cui-pagination-color: white !important;
+    }
+  }
 
   @media (min-width: 768px) {
     picture {
