@@ -51,7 +51,7 @@ export class GetMangaService {
             }
         };
         if (!this.http.get(`${BASE_URL}/manga/${id_manga}/feed`, this.options)) {
-            console.log('error');
+            console.error('error');
             
         }
         return this.http.get(`${BASE_URL}/manga/${id_manga}/feed`, this.options)

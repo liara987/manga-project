@@ -24,7 +24,7 @@ export class ReadChapterComponent {
         this.hash = mangaImageData.chapter.hash
       },
       error: (error) => {
-        console.log(error);
+        console.error(error);
       },
       complete: () => {
         this.imageList.forEach((x, i) => {
