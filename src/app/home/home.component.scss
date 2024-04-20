@@ -21,6 +21,15 @@
   margin-top: 1rem;
 }
 
+.show-more{
+  display: flex;
+  justify-content: center;
+  &:hover{
+    color: rgba($color: white, $alpha: .3);
+  }
+  cursor: pointer;
+}
+
 app-card {
   cursor: pointer;
 }
