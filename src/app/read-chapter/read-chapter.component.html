@@ -1,10 +1,9 @@
 <div class="app-read-chapter">
   @for (image of images; track $index) {
   <figure>
-    <figcaption>{{ $index + 1 }}</figcaption>
     <img cImg fluid src="{{ image }}" alt="" />
   </figure>
   }
 
-  <app-go-to-top (click)="onClickGoToTop()"></app-go-to-top>
+  <app-go-to-top></app-go-to-top>
 </div>
