@@ -1,9 +1,13 @@
-.app-read-chapter{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.app-read-chapter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-    figure{
-        text-align: center;
-    }    
+  figure {
+    text-align: center;
+
+    img {
+      max-width: 100%;
+    }
+  }
 }
