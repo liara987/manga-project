@@ -1,9 +1,11 @@
-<button>
-  <svg
-    [cIcon]="icons.cilArrowThickTop"
-    name="cilArrowThickTop"
-    size="xl"
-    title="Numbered List Icon"
-  ></svg>
-  go to top
+<button cButton color="dark" (click)="onClickGoToTop()">
+  <div>
+    <svg
+      [cIcon]="icons.cilArrowThickTop"
+      name="cilArrowThickTop"
+      size="xl"
+      title="Numbered List Icon"
+    ></svg>
+    Go to top
+  </div>
 </button>
