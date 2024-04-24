@@ -64,11 +64,31 @@
     }
   }
 
+  .list-options{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   &-list-header {
     display: block;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+  }
+
+  .dropdown-menu {
+    max-height: 18rem;
+    overflow-y: auto;
+  }
+
+  .language {
+    width: 15rem;
+    .language-flag {
+      border-radius: 50%;
+      width: 2rem;
+      margin-right: 0.5rem;
+    }
   }
 
   .page-item {
