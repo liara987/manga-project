@@ -89,6 +89,12 @@
     justify-content: flex-end;
   }
 
+  c-pagination {
+    a {
+      cursor: pointer;
+    }
+  }
+
   @media (min-width: 768px) {
     picture {
       flex-direction: row;
