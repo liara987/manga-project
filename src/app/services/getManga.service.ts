@@ -1,6 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { typeCard } from '../card/card.component';
 import { Observable } from 'rxjs';
 
 const BASE_URL = 'https://api.mangadex.org'
@@ -16,12 +15,11 @@ export class GetMangaService {
     public getAllMangas(page: number): Observable<any> {
         this.options = {
             params: {
-                'availableTranslatedLanguage[]': 'en',
                 'limit': 96,
                 'offset': page,
                 'order[latestUploadedChapter]': 'desc',
                 'hasAvailableChapters': "true",
-                "contentRating[]":["suggestive", "safe"]
+                "contentRating[]": ["suggestive", "safe"]
             }
         };
         return this.http.get(`${BASE_URL}/manga`, this.options)
@@ -40,21 +38,29 @@ export class GetMangaService {
         return (`${BASE_IMAGE_URL}/covers/${id_cover_art}/${file_name}.256.jpg`)
     }
 
-    public getMangaChapterList(id_manga: string, page: number, order: string): Observable<any> {
-        this.options = {
-            params: {
-                'translatedLanguage[]': this.languages,
-                'order[chapter]': order,
-                'includeEmptyPages': 0,
-                limit: 96,
-                offset: page
-            }
-        };
-        if (!this.http.get(`${BASE_URL}/manga/${id_manga}/feed`, this.options)) {
-            console.error('error');
-            
+    public getMangaChapterList(id_manga: string, page: number, order: string, languge?: string): Observable<any> {
+        if (languge) {
+            this.options = {
+                params: {
+                    'translatedLanguage[]': languge,
+                    'order[chapter]': order,
+                    'includeEmptyPages': 0,
+                    limit: 96,
+                    offset: page
+                }
+            };
+        } else {
+            this.options = {
+                params: {
+                    'order[chapter]': order,
+                    'includeEmptyPages': 0,
+                    limit: 96,
+                    offset: page
+                }
+            };
         }
-        return this.http.get(`${BASE_URL}/manga/${id_manga}/feed`, this.options)
+        
+        return this.http.get(`${BASE_URL}/chapter?manga=${id_manga}`, this.options)
     }
 
     public getChapterImageData(id_chapter: string): Observable<any> {
