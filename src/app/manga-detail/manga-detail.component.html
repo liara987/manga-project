@@ -84,31 +84,30 @@
         </li>
         <hr />
         }
-      </ul>
-      } @else {
+      </ul>      
+      @if (chapterList.length > 0 && chapterList.length <= 96) {
+      <c-pagination align="center" aria-label="Page navigation example">
+        <li cPageItem (click)="previousPage()">
+          <a cPageLink>Previous</a>
+        </li>
+        <li cPageItem>
+          <a cPageLink (click)="setPage(1)">1</a>
+        </li>
+        <li cPageItem>
+          <a cPageLink (click)="setPage(96)">2</a>
+        </li>
+        <li cPageItem>
+          <a cPageLink (click)="setPage(192)">3</a>
+        </li>
+        <li cPageItem (click)="nextPage()">
+          <a cPageLink>Next</a>
+        </li>
+      </c-pagination>
+      } } @else {
       <div class="center-loading">
         <c-spinner color="light"></c-spinner>
       </div>
       }
-    </section>    
-    @if (chapterList.length > 0 && chapterList.length >= 96) {      
-    <c-pagination align="center" aria-label="Page navigation example">
-      <li cPageItem (click)="previousPage()">
-        <a cPageLink>Previous</a>
-      </li>
-      <li cPageItem>
-        <a cPageLink (click)="setPage(1)">1</a>
-      </li>
-      <li cPageItem>
-        <a cPageLink (click)="setPage(96)">2</a>
-      </li>
-      <li cPageItem>
-        <a cPageLink (click)="setPage(192)">3</a>
-      </li>
-      <li cPageItem (click)="nextPage()">
-        <a cPageLink>Next</a>
-      </li>
-    </c-pagination>
-    }
+    </section>
   </div>
 </div>
