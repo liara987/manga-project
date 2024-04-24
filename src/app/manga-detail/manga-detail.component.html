@@ -91,7 +91,7 @@
       </div>
       }
     </section>    
-    @if (chapterList.length > 0 && chapterList.length < 96) {      
+    @if (chapterList.length > 0 && chapterList.length >= 96) {      
     <c-pagination align="center" aria-label="Page navigation example">
       <li cPageItem (click)="previousPage()">
         <a cPageLink>Previous</a>
