@@ -149,40 +149,7 @@ export class MangaDetailComponent {
     this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
   }
 
-  getLanguage(lang: string) {
-    // this.codeLanguage = ISO6391.getCode(lang)
-    // switch (this.codeLanguage) {
-    //   case 'pt':
-    //     this.codeLanguage = 'pt-br'
-    //     break;
-
-    //   case 'zh-Hant':
-    //     this.codeLanguage = 'zh-hk'
-    //     break;
-
-    //   case 'es':
-    //     this.codeLanguage = 'es-la'
-    //     break;
-
-    //   case 'jp':
-    //     this.codeLanguage = 'ja-ro'
-    //     break;
-
-    //   case 'ko':
-    //     this.codeLanguage = 'ko-ro'
-    //     break;
-
-    //   case 'zh':
-    //     this.codeLanguage = 'zh-ro'
-    //     break;
-
-    //   default:
-    //     break;
-    // }    
-
-    console.log(lang);
-    
-
+  getLanguage(lang: string) {        
     this.getMangaChapterList(this.mangaDetail.id, lang)
   }
 }
