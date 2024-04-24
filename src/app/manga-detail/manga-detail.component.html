@@ -42,33 +42,59 @@
     }
     <section class="app-manga-detail-list-header">
       @if (showMangaList || showMangaData) {
-      <div class="align-order">
-        <button
-          class="app-manga-detail-order"
-          (click)="toggleOrder()"
-          cButton
-          color="dark"
-        >
-          @if (!orderAsc) { Increasing
-          <svg
-            [cIcon]="icons.cilArrowCircleTop"
-            size="lg"
-            title="Arrow Circle Top Icon"
-          ></svg>
-          } @else { Descending
-          <svg
-            [cIcon]="icons.cilArrowCircleBottom"
-            size="lg"
-            title="Arrow Circle Bottom Icon"
-          ></svg>
-          }
-        </button>
+      <div class="list-options">
+        <c-dropdown>
+          <button cButton cDropdownToggle color="secondary">
+            Language
+          </button>
+          <ul cDropdownMenu>
+            @for (lang of languageList; track $index) {
+            <li>
+              <a (click)="getLanguage(lang)" cDropdownItem>{{ lang }}</a>
+            </li>
+            }
+          </ul>
+        </c-dropdown>
+        <div class="align-order">
+          <button
+            class="app-manga-detail-order"
+            (click)="toggleOrder()"
+            cButton
+            color="dark"
+          >
+            @if (!orderAsc) { Increasing
+            <svg
+              [cIcon]="icons.cilArrowCircleTop"
+              size="lg"
+              title="Arrow Circle Top Icon"
+            ></svg>
+            } @else { Descending
+            <svg
+              [cIcon]="icons.cilArrowCircleBottom"
+              size="lg"
+              title="Arrow Circle Bottom Icon"
+            ></svg>
+            }
+          </button>
+        </div>
       </div>
+      
+      @if (chapterList.length === 0) {
+        No chapter found
+      }
 
       <ul class="app-manga-detail-chapter-list">
         @for (chapter of chapterList; track $index) {
         <li>
           <a [routerLink]="['/chapter', chapter.id]">
+            <span class="language">
+              <img
+                class="language-flag"
+                alt="Flag"
+                src="{{ chapter.attributes.translatedLanguage | showFlag }}"
+              />
+              {{ chapter.attributes.translatedLanguage | formatLanguage }}
+            </span>
             @if (chapter.attributes.volume) {
             <span> Volume - {{ chapter.attributes.volume }} </span>
             }
@@ -84,8 +110,9 @@
         </li>
         <hr />
         }
-      </ul>      
-      @if (chapterList.length > 0 && chapterList.length <= 96) {
+      </ul>
+
+      @if (chapterList.length >= 96) {
       <c-pagination align="center" aria-label="Page navigation example">
         <li cPageItem (click)="previousPage()">
           <a cPageLink>Previous</a>
