@@ -108,6 +108,7 @@ export class MangaDetailComponent {
 
   toggleOrder() {
     this.orderAsc = !this.orderAsc
+    this.page = 0
     this.getMangaChapterList(this.mangaDetail.id)
   }
 
