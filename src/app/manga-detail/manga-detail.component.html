@@ -48,6 +48,8 @@
             Language
           </button>
           <ul cDropdownMenu>
+            <li> <a (click)="getLanguage('')" cDropdownItem>None</a></li>
+            
             @for (lang of languageList; track $index) {
             <li>
               <a (click)="getLanguage(lang)" cDropdownItem>{{ lang }}</a>
