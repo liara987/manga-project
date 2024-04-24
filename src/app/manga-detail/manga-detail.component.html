@@ -44,15 +44,20 @@
       @if (showMangaList || showMangaData) {
       <div class="list-options">
         <c-dropdown>
-          <button cButton cDropdownToggle color="secondary">
-            Language
-          </button>
+          <button cButton cDropdownToggle color="secondary">Language</button>
           <ul cDropdownMenu>
-            <li> <a (click)="getLanguage('')" cDropdownItem>None</a></li>
-            
+            <li><a (click)="getLanguage('')" cDropdownItem>None</a></li>
+
             @for (lang of languageList; track $index) {
             <li>
-              <a (click)="getLanguage(lang)" cDropdownItem>{{ lang }}</a>
+              <a (click)="getLanguage(lang)" cDropdownItem>
+                <img
+                  class="language-flag"
+                  alt="Flag"
+                  src="{{ lang | showFlag }}"
+                />
+                {{ lang | formatLanguage }}
+              </a>
             </li>
             }
           </ul>
@@ -80,10 +85,8 @@
           </button>
         </div>
       </div>
-      
-      @if (chapterList.length === 0) {
-        No chapter found
-      }
+
+      @if (chapterList.length === 0) { No chapter found }
 
       <ul class="app-manga-detail-chapter-list">
         @for (chapter of chapterList; track $index) {

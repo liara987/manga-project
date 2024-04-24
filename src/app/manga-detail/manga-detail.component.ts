@@ -62,7 +62,7 @@ export class MangaDetailComponent {
   showMangaList = false
   showMangaData = false
   languageDisplay = []
-  languageList = ISO6391.getAllNames().sort()
+  languageList =  []
   codeLanguage = ''
 
   constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
@@ -112,6 +112,7 @@ export class MangaDetailComponent {
         this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
         this.mangaDetail.type = mangaDetailData.data[0].type
         this.mangaDetail.yearLauch = mangaDetailData.data[0].attributes.year
+        this.languageList = mangaDetailData.data[0].attributes.availableTranslatedLanguages;        
 
         mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {
           this.genreList[i] = element.attributes.name.en
@@ -149,36 +150,39 @@ export class MangaDetailComponent {
   }
 
   getLanguage(lang: string) {
-    this.codeLanguage = ISO6391.getCode(lang)
-    switch (this.codeLanguage) {
-      case 'pt':
-        this.codeLanguage = 'pt-br'
-        break;
+    // this.codeLanguage = ISO6391.getCode(lang)
+    // switch (this.codeLanguage) {
+    //   case 'pt':
+    //     this.codeLanguage = 'pt-br'
+    //     break;
 
-      case 'zh-Hant':
-        this.codeLanguage = 'zh-hk'
-        break;
+    //   case 'zh-Hant':
+    //     this.codeLanguage = 'zh-hk'
+    //     break;
 
-      case 'es':
-        this.codeLanguage = 'es-la'
-        break;
+    //   case 'es':
+    //     this.codeLanguage = 'es-la'
+    //     break;
 
-      case 'jp':
-        this.codeLanguage = 'ja-ro'
-        break;
+    //   case 'jp':
+    //     this.codeLanguage = 'ja-ro'
+    //     break;
 
-      case 'ko':
-        this.codeLanguage = 'ko-ro'
-        break;
+    //   case 'ko':
+    //     this.codeLanguage = 'ko-ro'
+    //     break;
 
-      case 'zh':
-        this.codeLanguage = 'zh-ro'
-        break;
+    //   case 'zh':
+    //     this.codeLanguage = 'zh-ro'
+    //     break;
 
-      default:
-        break;
-    }    
+    //   default:
+    //     break;
+    // }    
 
-    this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
+    console.log(lang);
+    
+
+    this.getMangaChapterList(this.mangaDetail.id, lang)
   }
 }
