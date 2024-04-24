@@ -62,7 +62,7 @@ export class MangaDetailComponent {
   showMangaList = false
   showMangaData = false
   languageDisplay = []
-  languageList = ISO6391.getAllNames()
+  languageList = ISO6391.getAllNames().sort()
   codeLanguage = ''
 
   constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
