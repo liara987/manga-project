@@ -63,6 +63,40 @@ export class GetMangaService {
         return this.http.get(`${BASE_URL}/chapter?manga=${id_manga}`, this.options)
     }
 
+    public getMangaByVolume(id_manga: string, volume: number, language?: string): Observable<any> {
+        if (language) {
+            this.options = {
+                params: {
+                    'translatedLanguage[]': language,
+                    'order[chapter]': 'asc',
+                    'includeEmptyPages': 0,
+                    'limit': 100,
+                    'volume[]': volume
+                }
+            };
+        } else {
+            this.options = {
+                params: {
+                    'order[chapter]': 'asc',
+                    'includeEmptyPages': 0,
+                    'limit': 100,
+                    'volume[]': volume
+                }
+            };
+        }
+
+        return this.http.get(`${BASE_URL}/chapter?manga=${id_manga}`, this.options)
+    }
+
+    public getAllChapter(id_manga: string, language: string): Observable<any> {
+        this.options = {
+            params: {
+                'translatedLanguage[]': language
+            }
+        }
+        return this.http.get(`${BASE_URL}/manga/${id_manga}/aggregate`, this.options)
+    }
+
     public getChapterImageData(id_chapter: string): Observable<any> {
         return this.http.get(`${BASE_URL}/at-home/server/${id_chapter}`)
     }
