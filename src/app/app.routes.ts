@@ -7,5 +7,6 @@ export const routes: Routes = [
     {path: 'manga/:title/:image', component: MangaDetailComponent},
     {path: '', component: HomeComponent},
     {path: 'home', component: HomeComponent},
-    {path: 'chapter/:id_chapter', component: ReadChapterComponent},
+    {path: 'chapter/:id_chapter/:id_manga/:language', component: ReadChapterComponent},
+    {path: 'refreshChapter/:id_chapter/:id_manga/:language', component: ReadChapterComponent},
 ];

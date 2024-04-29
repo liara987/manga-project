@@ -90,8 +90,8 @@
 
       <ul class="app-manga-detail-chapter-list">
         @for (chapter of chapterList; track $index) {
-        <li>
-          <a [routerLink]="['/chapter', chapter.id]">
+        <li>          
+          <a [routerLink]="['/chapter', chapter.id, mangaDetail.id, chapter.attributes.translatedLanguage]">
             <span class="language">
               <img
                 class="language-flag"

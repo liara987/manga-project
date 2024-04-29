@@ -4,7 +4,10 @@ import { GetMangaService } from '../services/getManga.service';
 import { ImgModule } from '@coreui/angular';
 import { CommonModule } from '@angular/common';
 import { RouterModule, RouterLink } from '@angular/router';
-import ISO6391 from 'iso-639-1';
+import { cilArrowCircleTop, cilArrowCircleBottom } from '@coreui/icons';
+import { IconDirective } from '@coreui/icons-angular';
+import { ChangeFormatLanguagePipe } from '../pipe/formatLanguage.pipe';
+import { ShowFlagPipe } from '../pipe/showFlag.pipe';
 import {
   PageItemDirective,
   PageLinkDirective,
@@ -13,10 +16,6 @@ import {
   SpinnerModule,
   DropdownModule,
 } from '@coreui/angular';
-import { cilArrowCircleTop, cilArrowCircleBottom } from '@coreui/icons';
-import { IconDirective } from '@coreui/icons-angular';
-import { ChangeFormatLanguagePipe } from '../pipe/formatLanguage.pipe';
-import { ShowFlagPipe } from '../pipe/showFlag.pipe';
 
 export interface typeDetailManga {
   id: string,
@@ -62,7 +61,7 @@ export class MangaDetailComponent {
   showMangaList = false
   showMangaData = false
   languageDisplay = []
-  languageList =  []
+  languageList = []
   codeLanguage = ''
 
   constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
@@ -112,7 +111,7 @@ export class MangaDetailComponent {
         this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
         this.mangaDetail.type = mangaDetailData.data[0].type
         this.mangaDetail.yearLauch = mangaDetailData.data[0].attributes.year
-        this.languageList = mangaDetailData.data[0].attributes.availableTranslatedLanguages;        
+        this.languageList = mangaDetailData.data[0].attributes.availableTranslatedLanguages;
 
         mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {
           this.genreList[i] = element.attributes.name.en
@@ -149,7 +148,7 @@ export class MangaDetailComponent {
     this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
   }
 
-  getLanguage(lang: string) {        
+  getLanguage(lang: string) {
     this.getMangaChapterList(this.mangaDetail.id, lang)
   }
 }
