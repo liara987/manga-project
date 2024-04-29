@@ -14,4 +14,9 @@
   c-dropdown{
     margin-top: 4rem;
   }
+
+  .dropdown-menu {
+    max-height: 18rem;
+    overflow-y: auto;
+  }
 }
