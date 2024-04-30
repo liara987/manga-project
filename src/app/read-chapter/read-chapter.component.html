@@ -1,16 +1,27 @@
 <div class="app-read-chapter">
-  <c-dropdown>
-    <button cButton cDropdownToggle color="secondary">Chapter List</button>
-    <ul cDropdownMenu>
-      @for (chap of chapterList; track $index) {
-      <li>
-        <a cDropdownItem (click)="onChapterClick(chap.id, chap.others)">
-          {{ chap.chapter }}
-        </a>
-      </li>
-      }
-    </ul>
-  </c-dropdown>
+  <header class="chapter-control">
+    <button (click)="prev()" cButton color="dark" name="previous chapter">
+      <svg [cIcon]="icons.cilChevronLeft" size="lg"></svg>
+    </button>
+    <c-dropdown>
+      <button cButton cDropdownToggle color="secondary">Chapter List</button>
+      <ul cDropdownMenu>
+        @for (chap of chapterList; track $index) {
+        <li>
+          <a
+            cDropdownItem
+            (click)="onChapterClick(chap.id, chap.others, chap.chapter)"
+          >
+            {{ chap.chapter }}
+          </a>
+        </li>
+        }
+      </ul>
+    </c-dropdown>
+    <button (click)="next()" cButton color="dark" name="next chapter">
+      <svg [cIcon]="icons.cilChevronRight" size="lg"></svg>
+    </button>
+  </header>
   @for (image of images; track $index) {
   <figure>
     <img cImg fluid src="{{ image }}" alt="" />

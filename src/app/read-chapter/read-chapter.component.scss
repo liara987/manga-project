@@ -12,7 +12,17 @@
   }
 
   c-dropdown{
-    margin-top: 4rem;
+    margin: 0 1rem;
+  }
+
+  button{
+    display: flex;
+    align-items: center;
+  }
+
+  .chapter-control{
+    display: flex;
+    margin: 4rem 0 0.5rem 0;
   }
 
   .dropdown-menu {
