@@ -3,11 +3,12 @@
   background-color: #23252b;
   display: flex;
   align-items: center;
-  position: fixed;  
+  justify-content: space-between;
+  position: fixed;
   width: 100vw;
   z-index: 2;
 
-  a {
+  .home-link {
     display: flex;
     padding-left: 1.25rem;
 
@@ -22,6 +23,30 @@
     @media (min-width: 768px) {
       span {
         display: block;
+      }
+    }
+  }
+
+  .search-bar {
+    padding-right: 1.25rem;
+  }
+
+  .list-result {
+    position: fixed;
+    max-height: 18rem;
+    overflow-y: auto;
+    scrollbar-color: white black;
+    scrollbar-width: thin;
+    right: 0;
+    width: 50%;
+
+    &-item {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      img {
+        margin-right: 0.5rem;
       }
     }
   }

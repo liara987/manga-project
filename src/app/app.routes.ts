@@ -5,6 +5,7 @@ import { ReadChapterComponent } from './read-chapter/read-chapter.component';
 
 export const routes: Routes = [
     {path: 'manga/:title/:image', component: MangaDetailComponent},
+    {path: 'refreshManga/:title/:image', component: MangaDetailComponent},
     {path: '', component: HomeComponent},
     {path: 'home', component: HomeComponent},
     {path: 'chapter/:id_chapter/:id_manga/:chapter_number/:language', component: ReadChapterComponent},

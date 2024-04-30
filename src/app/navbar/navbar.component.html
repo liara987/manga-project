@@ -1,6 +1,34 @@
 <nav class="app-navbar">
-  <a routerLink="/home">
+  <a class="home-link" routerLink="/home">
     <svg [cIcon]="icons.cilHome" size="lg" title="Home Icon"></svg>
     <span>Manga Project</span>
   </a>
+
+  <div class="search-bar">
+    <c-input-group sizing="sm">
+      <span cInputGroupText id="inputGroup-sizing-sm">Search</span>
+      <input
+        id="name"
+        [(ngModel)]="mangaTitle"
+        (ngModelChange)="valueChange($event)"
+        (keydown.enter)="valueChange(mangaTitle)"
+        aria-describedby="inputGroup-sizing-sm"
+        aria-label="Sizing example input"
+        cFormControl
+      />
+    </c-input-group>
+
+    @if (showResults) {
+    <ul #list class="list-result" cListGroup>
+      @for (item of listResult; track $index) { @if (item.title) {
+      <li cListGroupItem>
+        <a class="list-result-item" (click)="onChapterClick(item.title, item.image)">
+          <img cImg height="100" align="start" rounded src="{{ item.image }}" thumbnail width="60" />
+          {{ item.title }}          
+        </a>
+      </li>
+      } }
+    </ul>
+    }
+  </div>
 </nav>
