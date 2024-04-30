@@ -38,7 +38,7 @@
     scrollbar-color: white black;
     scrollbar-width: thin;
     right: 0;
-    width: 50%;
+    width: 100%;
 
     &-item {
       cursor: pointer;
@@ -48,6 +48,10 @@
       img {
         margin-right: 0.5rem;
       }
+    }
+
+    @media (min-width: 768px) {
+      width: 50%;
     }
   }
 }
