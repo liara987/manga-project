@@ -11,16 +11,16 @@
     }
   }
 
-  c-dropdown{
+  c-dropdown {
     margin: 0 1rem;
   }
 
-  button{
+  button {
     display: flex;
     align-items: center;
   }
 
-  .chapter-control{
+  .chapter-control {
     display: flex;
     margin: 4rem 0 0.5rem 0;
   }
@@ -28,5 +28,7 @@
   .dropdown-menu {
     max-height: 18rem;
     overflow-y: auto;
+    scrollbar-color: white black;
+    scrollbar-width: thin;
   }
 }
