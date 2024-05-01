@@ -51,6 +51,7 @@ This webpage allows you to search for and read a diverse selection of comics fro
 
 ![title](telas/go-to-top.gif)
 
+---
 
 ### Mobile
 
