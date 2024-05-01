@@ -2,26 +2,66 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
 
-## Development server
+This webpage allows you to search for and read a diverse selection of comics from Japan, Korea, and China, with translations available in multiple languages.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Installation Instructions
 
-## Code scaffolding
+ Steps to install and modify this project:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- You need to have Angular and Node installed at your machine
+- Clone the repository
+- Open the folder in a terminal and run `npm i`
+- Then run `ng serve`
+- Navigate to `http://localhost:4200/`
+- The application will automatically reload if you change any of the source files.
 
-## Build
+## Screenshots
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Home Responsive
+![title](telas/home-responsive.gif)
 
-## Running unit tests
+### Carousel Desktop
+![title](telas/carousel.gif)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Show More button
+![title](telas/show-more.gif)
 
-## Running end-to-end tests
+### Search Desktop
+![title](telas/search-bar.gif)
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+### Manga detail desktop
+![title](telas/manga-detail.gif)
 
-## Further help
+### Pagination
+![title](telas/pagination.gif)
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+### Change Chapter
+![title](telas/change-chapter.gif)
+
+### Go to Top Button
+![title](telas/go-to-top.gif)
+
+### Carousel Mobile
+![title](telas/carousel-mobile.gif)
+
+### Search Mobile
+![title](telas/open-manga-mobile.gif)
+
+## Folder Structure
+
+The main folders are
+
+- **app**: where all the components are
+  - **pipe**: all the custom pipes to format languages
+  - **services**: all services to acess manga information
+- **assets**: has all the the internal images and logo
+
+## API Documentation
+
+This project uses [MangaDex API](https://api.mangadex.org/docs/) to get all the manga information.
+
+## Contact Information
+
+- [Linkedin](https://www.linkedin.com/in/liara-programadora/)
+
+- [Youtube](https://www.youtube.com/channel/UCkjlpKaG0SUeCQso6Lt2gbg)
