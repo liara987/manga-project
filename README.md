@@ -17,34 +17,47 @@ This webpage allows you to search for and read a diverse selection of comics fro
 
 ## Screenshots
 
-### Home Responsive
+### Desktop
+
+#### Home Responsive
+
 ![title](telas/home-responsive.gif)
 
-### Carousel Desktop
+#### Carousel
+
 ![title](telas/carousel.gif)
 
-### Show More button
+#### Show More button
+
 ![title](telas/show-more.gif)
 
-### Search Desktop
+#### Search
+
 ![title](telas/search-bar.gif)
 
-### Manga detail desktop
+#### Manga Detail
+
 ![title](telas/manga-detail.gif)
 
-### Pagination
+#### Pagination
+
 ![title](telas/pagination.gif)
 
-### Change Chapter
+#### Change Chapter
+
 ![title](telas/change-chapter.gif)
 
-### Go to Top Button
+#### Go to Top Button
+
 ![title](telas/go-to-top.gif)
 
-### Carousel Mobile
+
+### Mobile
+
+#### Carousel 
 ![title](telas/carousel-mobile.gif)
 
-### Search Mobile
+#### Search
 ![title](telas/open-manga-mobile.gif)
 
 ## Folder Structure
