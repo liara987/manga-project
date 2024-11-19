@@ -1,19 +1,30 @@
-# MangaProject
+# MangaProject - Your Global Library of Comics
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.0.
+MangaProject is a web application developed in Angular that offers an immersive experience for comic enthusiasts worldwide. Featuring comics from Japan, Korea, and China, the platform allows users to read their favorite works translated into various languages, fostering cultural exchange and global appreciation of these stories. It aims to make comics accessible globally, connecting readers from different cultures and languages. With an intuitive and feature-rich interface, the platform celebrates cultural diversity, delivering a unique experience for comic fans around the world.
 
-This webpage allows you to search for and read a diverse selection of comics from Japan, Korea, and China, with translations available in multiple languages.
+## Key Features
+**Multicultural Library:**
+- Access to popular comics such as manga (Japan), manhwa (Korea), and manhua (China).
+  
+**Multilingual Translations:**
+- Available in languages like English, Portuguese, Spanish, and more, catering to a global audience.
 
-## Installation Instructions
+**Interactive Reader:**
+- Responsive reading interface with options for zoom, page navigation, and night mode for a comfortable experience.
 
- Steps to install and modify this project:
+**Search:**
+- Advanced search tools to find titles.
 
-- You need to have Angular and Node installed at your machine
-- Clone the repository
-- Open the folder in a terminal and run `npm i`
-- Then run `ng serve`
-- Navigate to `http://localhost:4200/`
-- The application will automatically reload if you change any of the source files.
+---
+
+### Technologies Used
+**Angular [17.1.0]:** Framework for developing a fast, dynamic, and scalable interface.
+  
+**TypeScript:** Ensures robust and well-structured code.
+
+**SCSS:** Modern and responsive styling for a visually appealing interface.
+
+**RESTful API:** Integration with external services to provide updated content and high-quality translations.
 
 ## Screenshots
 
