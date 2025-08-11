@@ -11,7 +11,7 @@ export class GetMangaService {
   public options = {};
 
   // URL do seu proxy no Vercel
-  private proxyUrl = 'https://seu-projeto.vercel.app/api/proxy';
+  private proxyUrl = 'https://manga-project-w833.vercel.app/api/proxy';
 
   constructor(private http: HttpClient) {}
 
