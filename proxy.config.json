@@ -1,0 +1,10 @@
+{
+  "/api": {
+    "target": "https://manga-project-w833.vercel.app/",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": "/api/proxy"
+    }
+  }
+}

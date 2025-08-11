@@ -10,18 +10,7 @@ export class GetMangaService {
   public languages = ['en'];
   public options = {};
 
-  // URL do seu proxy no Vercel
-  private proxyUrl = 'https://manga-project-w833.vercel.app/api/proxy';
-
   constructor(private http: HttpClient) {}
-
-  /**
-   * Função auxiliar para passar chamadas pelo proxy
-   */
-  private throughProxy(endpoint: string, params?: any): Observable<any> {
-    const targetUrl = encodeURIComponent(endpoint);
-    return this.throughProxy(`${this.proxyUrl}?url=${targetUrl}`, { params });
-  }
 
   public getAllMangas(page: number): Observable<any> {
     this.options = {
@@ -33,16 +22,16 @@ export class GetMangaService {
         'contentRating[]': ['suggestive', 'safe'],
       },
     };
-    return this.throughProxy(`/manga`, this.options);
+    return this.http.get(`/manga`, this.options);
   }
 
   public getCoverFileName(id_cover_art: string): Observable<any> {
-    return this.throughProxy(`/cover/${id_cover_art}`);
+    return this.http.get(`/cover/${id_cover_art}`);
   }
 
   public getMangaByTitle(title: string): Observable<any> {
     const options = { params: new HttpParams().set('title', title) };
-    return this.throughProxy(`/manga/`, options);
+    return this.http.get(`/manga/`, options);
   }
 
   public getMangaCover(id_cover_art: string, file_name: string): string {
@@ -76,7 +65,7 @@ export class GetMangaService {
       };
     }
 
-    return this.throughProxy(`/chapter?manga=${id_manga}`, this.options);
+    return this.http.get(`/chapter?manga=${id_manga}`, this.options);
   }
 
   public getMangaByVolume(
@@ -105,7 +94,7 @@ export class GetMangaService {
       };
     }
 
-    return this.throughProxy(`/chapter?manga=${id_manga}`, this.options);
+    return this.http.get(`/chapter?manga=${id_manga}`, this.options);
   }
 
   public getAllChapter(id_manga: string, language: string): Observable<any> {
@@ -114,11 +103,11 @@ export class GetMangaService {
         'translatedLanguage[]': language,
       },
     };
-    return this.throughProxy(`/manga/${id_manga}/aggregate`, this.options);
+    return this.http.get(`/manga/${id_manga}/aggregate`, this.options);
   }
 
   public getChapterImageData(id_chapter: string): Observable<any> {
-    return this.throughProxy(`/at-home/server/${id_chapter}`);
+    return this.http.get(`/at-home/server/${id_chapter}`);
   }
 
   public getChapterImage(hash: string, image_chapter_data: string): string {

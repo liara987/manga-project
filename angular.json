@@ -55,12 +55,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "manga-project:build:production",
-              "proxyConfig": "src/proxy.conf.js"
+              "buildTarget": "manga-project:build:production"
             },
             "development": {
-              "buildTarget": "manga-project:build:development",
-              "proxyConfig": "src/proxy.conf.js"
+              "buildTarget": "manga-project:build:development"
             }
           },
           "defaultConfiguration": "development"
