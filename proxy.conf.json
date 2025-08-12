@@ -1,0 +1,17 @@
+{
+  "/api": {
+    "target": "https://api.mangadex.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api": ""
+    },
+    "logLevel": "debug"
+  },
+
+  "https://uploads.mangadex.org": {
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": true
+  }
+}
