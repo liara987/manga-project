@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 const BASE_URL = '/api';
-const BASE_IMAGE_URL = 'https://uploads.mangadex.org';
+const BASE_IMAGE_URL = '/cover';
 @Injectable({ providedIn: 'root' })
 export class GetMangaService {
   public getDataJson: any;

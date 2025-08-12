@@ -9,9 +9,13 @@
     "logLevel": "debug"
   },
 
-  "https://uploads.mangadex.org": {
+  "/cover": {
+    "target": "https://uploads.mangadex.org",
     "secure": true,
     "changeOrigin": true,
-    "logLevel": true
+    "pathRewrite": {
+      "^/cover": ""
+    },
+    "logLevel": "debug"
   }
 }
