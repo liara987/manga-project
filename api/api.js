@@ -18,17 +18,24 @@ module.exports = async (req, res) => {
       headers: {
         Referer: "https://mangadex.org",
         "User-Agent": "Mozilla/5.0",
+        "Accept-Encoding": "identity",
       },
     });
 
     const data = await response.text();
-    res.status(response.status);
+
+    const BLOCKED_HEADERS = [
+      "transfer-encoding",
+      "connection",
+      "content-encoding",
+    ];
     response.headers.forEach((value, key) => {
-      if (!["transfer-encoding", "connection"].includes(key.toLowerCase())) {
+      if (!BLOCKED_HEADERS.includes(key.toLowerCase())) {
         res.setHeader(key, value);
       }
     });
-    res.end(data);
+
+    res.status(response.status).end(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
