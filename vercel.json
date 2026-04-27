@@ -1,8 +1,11 @@
 {
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/manga-project/browser",
+  "framework": "angular",
   "rewrites": [
-    {
-      "source": "/api",
-      "destination": "api.mangadex.org/api"
-    }
+    { "source": "/api/(.*)", "destination": "/api/api" },
+    { "source": "/cover/(.*)", "destination": "/api/cover" },
+    { "source": "/((?!api|cover).*)", "destination": "/index.html" }
   ]
 }
