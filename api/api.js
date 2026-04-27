@@ -1,20 +1,14 @@
-const https = require('https');
+const https = require("https");
 
 module.exports = async (req, res) => {
-  // Remove o prefixo /api da URL
-  const targetPath = req.url.replace(/^\/api/, '') || '/';
-  const targetUrl = `https://api.mangadex.org${targetPath}`;
+  const targetPath = req.url.replace(/^\/api/, ""); // → /manga?limit=96&offset=1&...
+  const fullTarget = `https://api.mangadex.org${targetPath}`; // query string já inclusa
 
-  // Monta a query string
-  const url = new URL(req.url, 'http://localhost');
-  const queryString = url.search;
-  const fullTarget = `https://api.mangadex.org${targetPath}${queryString}`;
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
@@ -22,15 +16,15 @@ module.exports = async (req, res) => {
   try {
     const response = await fetch(fullTarget, {
       headers: {
-        'Referer': 'https://mangadex.org',
-        'User-Agent': 'Mozilla/5.0',
+        Referer: "https://mangadex.org",
+        "User-Agent": "Mozilla/5.0",
       },
     });
 
     const data = await response.text();
     res.status(response.status);
     response.headers.forEach((value, key) => {
-      if (!['transfer-encoding', 'connection'].includes(key.toLowerCase())) {
+      if (!["transfer-encoding", "connection"].includes(key.toLowerCase())) {
         res.setHeader(key, value);
       }
     });
