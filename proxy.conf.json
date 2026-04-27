@@ -6,6 +6,9 @@
     "pathRewrite": {
       "^/api": ""
     },
+    "headers": {
+      "Referer": "https://mangadex.org"
+    },
     "logLevel": "debug"
   },
 
@@ -15,6 +18,9 @@
     "changeOrigin": true,
     "pathRewrite": {
       "^/cover": ""
+    },
+    "headers": {
+      "Referer": "https://mangadex.org"
     },
     "logLevel": "debug"
   }

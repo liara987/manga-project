@@ -1,8 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+
 const BASE_URL = '/api';
 const BASE_IMAGE_URL = '/cover';
+
 @Injectable({ providedIn: 'root' })
 export class GetMangaService {
   public getDataJson: any;
@@ -33,8 +35,9 @@ export class GetMangaService {
     return this.http.get(`${BASE_URL}/manga/`, options);
   }
 
-  public getMangaCover(id_cover_art: string, file_name: string): string {
-    return `${BASE_IMAGE_URL}/covers/${id_cover_art}/${file_name}.256.jpg`;
+  public getMangaCover(id_manga: string, file_name: string): string {
+    // Corrigido: usa o id do manga (não do cover_art) para montar a URL de imagem
+    return `${BASE_IMAGE_URL}/covers/${id_manga}/${file_name}.512.jpg`;
   }
 
   public getMangaChapterList(

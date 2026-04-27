@@ -50,18 +50,20 @@ export class HomeComponent {
           if (mangaData.data.length < 96) {
             this.page = mangaData.data.length;
           }
+
+          // ID do cover_art para buscar o filename
           this.coverId = this.mangaService.getCoverId(mangaItem);
+
           this.mangaService
             .getCoverFileName(this.coverId)
             .subscribe((cover: any) => {
               this.fileName = cover.data.attributes.fileName;
-              this.mangaID = cover.data.relationships.find(
-                ({ type }: any) => type === 'manga'
-              ).id;
+
+              // Usa o id do próprio mangaItem (não do cover) para montar a URL da imagem
               this.setCardContent(
                 mangaItem.id,
-                this.mangaService.getMangaCover(this.mangaID, this.fileName),
-                mangaItem.attributes.title.en
+                this.mangaService.getMangaCover(mangaItem.id, this.fileName),
+                mangaItem.attributes.title.en ?? Object.values(mangaItem.attributes.title)[0]
               );
             });
         });
