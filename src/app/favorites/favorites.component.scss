@@ -1,0 +1,62 @@
+.favorites-page { min-height: 100vh; background: var(--bg); padding-top: 3.75rem; }
+.fav-content { padding-top: 2rem; padding-bottom: 3rem; }
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  color: var(--text-muted);
+  .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  p { font-size: 1rem; }
+}
+
+.fav-card {
+  position: relative;
+  background: var(--card-bg);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 0.2s;
+  &:hover { transform: translateY(-4px); }
+  a { display: block; }
+}
+
+.fav-img-wrap { aspect-ratio: 2/3; overflow: hidden; }
+
+.fav-img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: filter 0.2s;
+  &:hover { filter: brightness(1.1); }
+}
+
+.fav-info { padding: 0.5rem 0.6rem 0.6rem; }
+
+.fav-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.remove-btn {
+  position: absolute;
+  top: 0.4rem; right: 0.4rem;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: rgba(255,255,255,0.8);
+  width: 1.8rem; height: 1.8rem;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s;
+  &:hover { background: rgba(232,71,63,0.8); color: #fff; }
+}

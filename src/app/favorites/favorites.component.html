@@ -1,0 +1,29 @@
+<div class="favorites-page">
+  <app-navbar></app-navbar>
+  <div class="container fav-content">
+    <h1 class="section-title">❤️ {{ t('favorites') }}</h1>
+
+    @if (favoritesService.favorites().length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">🔖</span>
+      <p>{{ t('nofavorites') }}</p>
+    </div>
+    } @else {
+    <div class="manga-grid">
+      @for (fav of favoritesService.favorites(); track fav.id) {
+      <div class="fav-card">
+        <a [routerLink]="['/manga', fav.id, fav.title, fav.image]">
+          <div class="fav-img-wrap">
+            <img class="fav-img" [src]="fav.image" [alt]="fav.title" loading="lazy" />
+          </div>
+          <div class="fav-info">
+            <p class="fav-title">{{ fav.title }}</p>
+          </div>
+        </a>
+        <button class="remove-btn" (click)="remove(fav.id)">✕</button>
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>
