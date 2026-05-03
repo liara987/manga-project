@@ -1,33 +1,46 @@
-.app-card {
-  &-figure {
-    width: max-content;
-    margin: 0;
-  }
-
-  &-image {
-    height: 13rem;
-    width: 8rem;
-  }
-
-  &-title {
-    color: #fff;
-    font-family: Lato, Helvetica Neue, helvetica, sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    padding: 0.5rem 0;
-    margin-bottom: 2rem;
-    width: 8rem;
-  }
-
-  @media (min-width: 2560px) {
-    &-image {
-      height: 25rem;
-      width: 20rem;
-    }
-
-    &-title {
-      font-size: 2rem;
-      width: 20rem;
+.manga-card {
+  background: var(--card-bg);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  cursor: pointer;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    .card-cover {
+      filter: brightness(1.1);
     }
   }
+}
+
+.card-image-wrap {
+  position: relative;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+}
+
+.card-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: filter 0.2s;
+}
+
+.card-info {
+  padding: 0.5rem 0.6rem;
+}
+
+.card-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

@@ -1,12 +1,10 @@
-<div class="app-card">
-  <figure class="app-card-figure">
-    <img
-      class="app-card-image"
-      [src]="cardContent.image"
-      [alt]="cardContent.title"
-      loading="lazy"
-      onerror="this.src='assets/images/logo2.webp'"
-    />
-    <figcaption><h4 class="app-card-title">{{ cardContent.title }}</h4></figcaption>
-  </figure>
+<div class="manga-card">
+  <div class="card-image-wrap">
+    <img class="card-cover" [src]="cardContent.image" [alt]="cardContent.title" loading="lazy"
+      onerror="this.src='assets/images/logo2.webp'" />
+    <app-button-favorite [cardContent]="cardContent" (toggle)="toggleFav($event)"></app-button-favorite>
+  </div>
+  <div class="card-info">
+    <h4 class="card-title">{{ cardContent.title }}</h4>
+  </div>
 </div>
