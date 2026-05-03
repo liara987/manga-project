@@ -10,7 +10,7 @@ import {
   selector: 'app-go-to-top',
   standalone: true,
   imports: [CommonModule],
-  template: './go-to-top.component.html',
+  templateUrl: './go-to-top.component.html',
   styleUrl: './go-to-top.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
