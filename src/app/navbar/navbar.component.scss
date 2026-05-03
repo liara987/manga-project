@@ -54,6 +54,24 @@
       color: var(--text-muted);
     }
   }
+  .clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.5rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      opacity: 1;
+    }
+    svg {
+      color: var(--text-muted);
+    }
+  }
 }
 
 .search-results {

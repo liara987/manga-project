@@ -83,6 +83,13 @@ export class NavbarComponent {
     this.searchSubject.next(value);
   }
 
+  clearSearch(): void {
+    this.mangaTitle = '';
+    this.listResult = [];
+    this.showResults = false;
+    this.searchInput.nativeElement.focus();
+  }
+
   performSearch(title: string): void {
     this.mangaService.getMangaByTitle(title).subscribe({
       next: (mangaData: any) => {
