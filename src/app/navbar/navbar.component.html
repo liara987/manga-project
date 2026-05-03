@@ -1,34 +1,108 @@
-<nav class="app-navbar">
-  <a class="home-link" routerLink="/home">
-    <svg [cIcon]="icons.cilHome" size="lg" title="Home Icon"></svg>
-    <span>Manga Project</span>
-  </a>
+<nav class="app-navbar" [attr.data-theme]="currentTheme()">
+  <div class="nav-left">
+    <a class="nav-brand" routerLink="/home">
+      <span class="brand-icon">⛩</span>
+      <span class="brand-text">MangaProject</span>
+    </a>
+  </div>
 
-  <div class="search-bar">
-    <c-input-group sizing="sm">
-      <span cInputGroupText id="inputGroup-sizing-sm">Search</span>
-      <input
-        id="name"
-        [(ngModel)]="mangaTitle"
-        (ngModelChange)="valueChange($event)"
-        (keydown.enter)="valueChange(mangaTitle)"
-        aria-describedby="inputGroup-sizing-sm"
-        aria-label="Sizing example input"
-        cFormControl
-      />
-    </c-input-group>
+  <div class="nav-center desktop-only">
+    <div class="search-wrapper" #resultsDropdown>
+      <div class="search-field">
+        <span class="search-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" class="search-input" x="0px" y="0px" width="28" height="28"
+            [attr.fill]="currentTheme() === 'dark' ? '#8888aa' : '#666680'" viewBox="0 0 50 50">
+            <path
+              d="M 21 3 C 11.654545 3 4 10.654545 4 20 C 4 29.345455 11.654545 37 21 37 C 24.701287 37 28.127393 35.786719 30.927734 33.755859 L 44.085938 46.914062 L 46.914062 44.085938 L 33.875 31.046875 C 36.43682 28.068316 38 24.210207 38 20 C 38 10.654545 30.345455 3 21 3 z M 21 5 C 29.254545 5 36 11.745455 36 20 C 36 28.254545 29.254545 35 21 35 C 12.745455 35 6 28.254545 6 20 C 6 11.745455 12.745455 5 21 5 z">
+            </path>
+          </svg></span>
+        <input #searchInput class="search-input" type="text" [(ngModel)]="mangaTitle"
+          (ngModelChange)="onSearchInput($event)" [placeholder]="t('search') + '...'" autocomplete="off" />
+      </div>
+      @if (showResults && listResult.length > 0) {
+      <ul class="search-results">
+        @for (item of listResult; track item.id) {
+        <li class="search-result-item" (click)="onMangaClick(item)">
+          <img class="result-thumb" [src]="item.image" [alt]="item.title" loading="lazy" />
+          <span class="result-title">{{ item.title }}</span>
+        </li>
+        }
+      </ul>
+      }
+    </div>
+  </div>
 
-    @if (showResults) {
-    <ul #list class="list-result" cListGroup>
-      @for (item of listResult; track $index) { @if (item.title) {
-      <li cListGroupItem>
-        <a class="list-result-item" (click)="onChapterClick(item.title, item.image)">
-          <img cImg height="100" align="start" rounded src="{{ item.image }}" thumbnail width="60" />
-          {{ item.title }}          
-        </a>
+  <div class="nav-right desktop-only">
+    <a class="nav-link" routerLink="/home">{{ t('home') }}</a>
+    <a class="nav-link fav-link" routerLink="/favorites">
+      {{ t('favorites') }}
+      @if (favCount() > 0) { <span class="fav-badge">{{ favCount() }}</span> }
+    </a>
+
+    <div class="lang-menu">
+      <button class="icon-btn" title="Language">🌐</button>
+      <div class="lang-dropdown">
+        @for (l of appLangs; track l.code) {
+        <button class="lang-option" [class.active]="currentLang() === l.code" (click)="setLang(l.code)">
+          {{ l.flag }} {{ l.label }}
+        </button>
+        }
+      </div>
+    </div>
+
+    <button class="icon-btn theme-btn" (click)="toggleTheme()" [title]="t('theme')">
+      @if (currentTheme() === 'dark') { ☀️ } @else { 🌙 }
+    </button>
+  </div>
+
+  <!-- Mobile controls -->
+  <div class="nav-mobile mobile-only">
+    <button class="icon-btn" (click)="toggleSearch()">🔍</button>
+    <a class="icon-btn" routerLink="/favorites">
+      ❤️@if (favCount() > 0) { <span class="fav-badge-sm">{{ favCount() }}</span> }
+    </a>
+    <button class="icon-btn theme-btn" (click)="toggleTheme()">
+      @if (currentTheme() === 'dark') { ☀️ } @else { 🌙 }
+    </button>
+    <button class="icon-btn" (click)="toggleMenu()">☰</button>
+  </div>
+
+  <!-- Mobile slide search -->
+  @if (isSearchOpen) {
+  <div class="mobile-search-bar" #resultsDropdown>
+    <div class="search-field">
+      <span class="search-icon">🔍</span>
+      <input #searchInput class="search-input" type="text" [(ngModel)]="mangaTitle"
+        (ngModelChange)="onSearchInput($event)" [placeholder]="t('search') + '...'" autocomplete="off" />
+    </div>
+    @if (showResults && listResult.length > 0) {
+    <ul class="search-results mobile">
+      @for (item of listResult; track item.id) {
+      <li class="search-result-item" (click)="onMangaClick(item)">
+        <img class="result-thumb" [src]="item.image" [alt]="item.title" loading="lazy" />
+        <span class="result-title">{{ item.title }}</span>
       </li>
-      } }
+      }
     </ul>
     }
   </div>
+  }
+
+  <!-- Mobile menu drawer -->
+  @if (isMenuOpen) {
+  <div class="mobile-menu">
+    <a class="mobile-nav-link" routerLink="/home" (click)="isMenuOpen=false">{{ t('home') }}</a>
+    <a class="mobile-nav-link" routerLink="/favorites" (click)="isMenuOpen=false">{{ t('favorites') }}</a>
+    <div class="mobile-lang-section">
+      <span class="mobile-section-label">{{ t('language') }}</span>
+      <div class="lang-options-row">
+        @for (l of appLangs; track l.code) {
+        <button class="lang-chip" [class.active]="currentLang() === l.code" (click)="setLang(l.code); isMenuOpen=false">
+          {{ l.flag }}
+        </button>
+        }
+      </div>
+    </div>
+  </div>
+  }
 </nav>

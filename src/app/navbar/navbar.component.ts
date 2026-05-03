@@ -1,64 +1,94 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Renderer2,
+  ViewChild,
+  computed,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { FormModule, ListGroupModule } from '@coreui/angular';
-import { cilHome } from '@coreui/icons';
-import { IconDirective } from '@coreui/icons-angular';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { FavoritesService } from '../services/favorites.service';
 import { GetMangaService } from '../services/getManga.service';
+import { AppLanguage, I18nService } from '../services/i18n.service';
+import { ThemeService } from '../services/theme.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [
-    RouterModule,
-    IconDirective,
-    FormModule,
-    FormsModule,
-    ListGroupModule,
-  ],
+  imports: [RouterModule, FormsModule, CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush, // OnPush = 2
 })
 export class NavbarComponent {
-  @ViewChild('list') list!: ElementRef;
-  icons = { cilHome };
+  @ViewChild('searchInput') searchInput!: ElementRef;
+  @ViewChild('resultsDropdown') resultsDropdown!: ElementRef;
 
   showResults = false;
-  mangaTitle: any;
-  title: string = '';
-  listResult = [{ title: '', image: '' }];
-  allData: any;
+  mangaTitle = '';
+  listResult: { id: string; title: string; image: string }[] = [];
+  isMenuOpen = false;
+  isSearchOpen = false;
+  private searchSubject = new Subject<string>();
+  favCount = computed(() => this.favoritesService.favorites().length);
+  currentTheme = computed(() => this.themeService.theme());
+  currentLang = computed(() => this.i18nService.lang());
+
+  appLangs: { code: AppLanguage; label: string; flag: string }[] = [
+    { code: 'en', label: 'English', flag: '🇬🇧' },
+    { code: 'pt', label: 'Português', flag: '🇧🇷' },
+    { code: 'es', label: 'Español', flag: '🇪🇸' },
+    { code: 'fr', label: 'Français', flag: '🇫🇷' },
+    { code: 'ja', label: '日本語', flag: '🇯🇵' },
+  ];
 
   constructor(
     private renderer: Renderer2,
-    private _router: Router,
+    private router: Router,
     private mangaService: GetMangaService,
+    public themeService: ThemeService,
+    public favoritesService: FavoritesService,
+    public i18nService: I18nService,
   ) {}
 
-  ngAfterViewInit() {
+  ngOnInit(): void {
+    this.searchSubject
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((title) => {
+        if (title.trim().length >= 2) this.performSearch(title);
+        else this.listResult = [];
+      });
+  }
+
+  ngAfterViewInit(): void {
     this.renderer.listen('window', 'click', (e: Event) => {
-      if (this.list && !this.list.nativeElement.contains(e.target)) {
+      if (
+        this.resultsDropdown &&
+        !this.resultsDropdown.nativeElement.contains(e.target)
+      ) {
         this.listResult = [];
+        this.showResults = false;
       }
     });
   }
 
-  searchManga(title: string) {
+  t(key: string): string {
+    return this.i18nService.t(key);
+  }
+
+  onSearchInput(value: string): void {
+    this.searchSubject.next(value);
+  }
+
+  performSearch(title: string): void {
     this.mangaService.getMangaByTitle(title).subscribe({
       next: (mangaData: any) => {
-        if (mangaData) {
-          this.showResults = true;
-        }
-        this.allData = mangaData.data;
-      },
-      error: (error) => {
-        console.error(error);
-      },
-      complete: () => {
-        this.allData.forEach((mangaItem: any) => {
-          this.title = mangaItem.attributes.title.en;
+        this.listResult = [];
+        mangaData.data.slice(0, 8).forEach((mangaItem: any) => {
           const coverId = this.mangaService.getCoverId(mangaItem);
-
           this.mangaService
             .getCoverFileName(coverId)
             .subscribe((cover: any) => {
@@ -67,30 +97,42 @@ export class NavbarComponent {
                 ({ type }: any) => type === 'manga',
               ).id;
               this.listResult.push({
-                title: mangaItem.attributes.title.en,
+                id: mangaItem.id,
+                title: this.mangaService.getMangaTitle(mangaItem),
                 image: this.mangaService.getMangaCover(mangaID, fileName),
               });
+              this.showResults = true;
             });
         });
       },
     });
   }
 
-  onChapterClick(title: string, image: string) {
-    this._router.navigateByUrl(`/`, { skipLocationChange: true }).then(() => {
-      this._router.navigate(['/manga', title, image]);
+  onMangaClick(item: { id: string; title: string; image: string }): void {
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate(['/manga', item.id, item.title, item.image]);
     });
-
     this.listResult = [];
     this.mangaTitle = '';
+    this.showResults = false;
+    this.isSearchOpen = false;
   }
 
-  valueChange(event: any) {
-    this.listResult = [];
-    this.searchManga(event);
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
-
-  hideResults() {
-    this.listResult = [];
+  setLang(lang: AppLanguage): void {
+    this.i18nService.setLang(lang);
+  }
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+  toggleSearch(): void {
+    this.isSearchOpen = !this.isSearchOpen;
+    if (this.isSearchOpen)
+      setTimeout(() => this.searchInput?.nativeElement.focus(), 100);
+  }
+  trackById(_: number, item: any): string {
+    return item.id;
   }
 }
