@@ -1,28 +1,88 @@
-<div class="content">
+<div class="home-page">
+  <app-navbar></app-navbar>
   <app-carousel></app-carousel>
-  <div class="container">
-    @if (showMangaList) {
-    <div class="cards">
-      @for (card of cardContent; track card.id) {
-      <a [routerLink]="['/manga', card.title, card.image]">
-        <div>
-          <app-card [cardContent]="card"></app-card>
+
+  <div class="home-content container">
+
+    <!-- Popular Section -->
+    <section class="manga-section">
+      <h2 class="section-title">🔥 {{ t('popular') }}</h2>
+      @if (loadingSection()) {
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      } @else {
+        <div class="manga-grid">
+          @for (card of popularMangas(); track card.id) {
+            <a [routerLink]="['/manga', card.id, card.title, card.image]">
+              <app-card [cardContent]="card"></app-card>
+            </a>
+          }
         </div>
-      </a>
       }
-    </div>
-    } @else {
-    <div class="center-loading">
-      <c-spinner color="light"></c-spinner>
-    </div>
-    } @if (cardContent.length > 0) {
-    <div class="show-more" cPageItem (click)="showMore()">
-      <svg
-        [cIcon]="icons.cilChevronCircleDownAlt"
-        size="3xl"
-        title="Arrow Circle Bottom Icon"
-      ></svg>
-    </div>
-    }
+    </section>
+
+    <!-- Recently Updated Section -->
+    <section class="manga-section">
+      <h2 class="section-title">🕐 {{ t('recent') }}</h2>
+      @if (loadingSection()) {
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      } @else {
+        <div class="manga-grid">
+          @for (card of recentMangas(); track card.id) {
+            <a [routerLink]="['/manga', card.id, card.title, card.image]">
+              <app-card [cardContent]="card"></app-card>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+    <!-- All Manga Section with Filters -->
+    <section class="manga-section">
+      <div class="section-header">
+        <h2 class="section-title">📚 All Manga</h2>
+        <button class="filter-toggle-btn" (click)="showFilters = !showFilters">
+          🎭 {{ t('filterGenres') }}
+          @if (selectedGenres.length > 0) { <span class="filter-count">{{ selectedGenres.length }}</span> }
+        </button>
+      </div>
+
+      @if (showFilters) {
+        <div class="genre-filters fade-in">
+          <div class="genre-chips">
+            @for (genre of allGenres; track genre) {
+              <button
+                class="genre-chip"
+                [class.selected]="isSelectedGenre(genre)"
+                (click)="toggleGenre(genre)"
+              >{{ genre }}</button>
+            }
+          </div>
+          @if (selectedGenres.length > 0) {
+            <button class="clear-btn" (click)="clearGenres()">✕ {{ t('clearFilters') }}</button>
+          }
+        </div>
+      }
+
+      @if (loading() && cardContent().length === 0) {
+        <div class="spinner-wrap"><div class="spinner"></div></div>
+      } @else {
+        <div class="manga-grid">
+          @for (card of cardContent(); track card.id) {
+            <a [routerLink]="['/manga', card.id, card.title, card.image]">
+              <app-card [cardContent]="card"></app-card>
+            </a>
+          }
+        </div>
+        @if (cardContent().length > 0) {
+          <div class="show-more-wrap">
+            <button class="show-more-btn" (click)="showMore()" [disabled]="loading()">
+              @if (loading()) { <span class="spinner-sm"></span> } @else { {{ t('showMore') }} ▾ }
+            </button>
+          </div>
+        }
+      }
+    </section>
+
   </div>
+  <app-go-to-top></app-go-to-top>
 </div>
