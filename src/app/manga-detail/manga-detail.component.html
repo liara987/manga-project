@@ -1,151 +1,102 @@
-<div class="app-manga-detail">
-  <div class="container">
-    @if (showMangaList) {
-    <picture>
-      <img cImg fluid src="{{ mangaDetail.image }}" fluid alt="" />
-      <figcaption>
-        <div class="app-manga-detail-info">
-          <div class="app-manga-detail-title">
-            <label>Title:</label>
-            <p>{{ mangaDetail.title }}</p>
-          </div>
+<div class="detail-page">
+  <app-navbar></app-navbar>
 
-          <div class="app-manga-detail-description">
-            <label>Description:</label>
-            <p>{{ mangaDetail.description }}</p>
-          </div>
-
-          <div class="app-manga-detail-type">
-            <label>Type:</label>
-            <p>{{ mangaDetail.type }}</p>
-          </div>
-
-          <div class="app-manga-detail-yearLauch">
-            <label>Lauching year:</label>
-            <p>{{ mangaDetail.yearLauch }}</p>
-          </div>
-
-          <div class="app-manga-detail-status">
-            <label>Status:</label>
-            <p>{{ mangaDetail.status }}</p>
-          </div>
-
-          <div class="app-manga-detail-genre">
-            <label>Genre: </label>
-            @for (genre of genreList; track genre) {
-            <pre><span>{{ genre }}</span> </pre>
-            }
-          </div>
-        </div>
-      </figcaption>
-    </picture>
-    }
-    <section class="app-manga-detail-list-header">
-      @if (showMangaList || showMangaData) {
-      <div class="list-options">
-        <c-dropdown>
-          <button cButton cDropdownToggle color="secondary">Language</button>
-          <ul cDropdownMenu>
-            <li><a (click)="getLanguage('')" cDropdownItem>None</a></li>
-
-            @for (lang of languageList; track $index) {
-            <li>
-              <a (click)="getLanguage(lang)" cDropdownItem>
-                <img
-                  class="language-flag"
-                  alt="Flag"
-                  src="{{ lang | showFlag }}"
-                />
-                {{ lang | formatLanguage }}
-              </a>
-            </li>
-            }
-          </ul>
-        </c-dropdown>
-        <div class="align-order">
-          <button
-            class="app-manga-detail-order"
-            (click)="toggleOrder()"
-            cButton
-            color="dark"
-          >
-            @if (!orderAsc) { Increasing
-            <svg
-              [cIcon]="icons.cilArrowCircleTop"
-              size="lg"
-              title="Arrow Circle Top Icon"
-            ></svg>
-            } @else { Descending
-            <svg
-              [cIcon]="icons.cilArrowCircleBottom"
-              size="lg"
-              title="Arrow Circle Bottom Icon"
-            ></svg>
-            }
+  <div class="detail-hero">
+    <div class="hero-bg" [style.background-image]="'url(' + mangaDetail().image + ')'"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content container">
+      @if (!loadingData()) {
+      <div class="hero-inner fade-in-up">
+        <div class="cover-wrap">
+          <img class="cover-img" [src]="mangaDetail().image" [alt]="mangaDetail().title" />
+          <button class="fav-btn-large" [class.active]="isFav()" (click)="toggleFav()">
+            {{ isFav() ? '❤️' : '🤍' }} {{ isFav() ? t('removeFavorite') : t('addFavorite') }}
           </button>
         </div>
-      </div>
-
-      @if (chapterList.length === 0) { No chapter found }
-
-      <ul class="app-manga-detail-chapter-list">
-        @for (chapter of chapterList; track $index) {
-        <li>          
-          <a 
-            [routerLink]="['/chapter', 
-            chapter.id,
-            mangaDetail.id,
-            chapter.attributes.chapter,
-            chapter.attributes.translatedLanguage]"
-            >
-            <span class="language">
-              <img
-                class="language-flag"
-                alt="Flag"
-                src="{{ chapter.attributes.translatedLanguage | showFlag }}"
-              />
-              {{ chapter.attributes.translatedLanguage | formatLanguage }}
-            </span>
-            @if (chapter.attributes.volume) {
-            <span> Volume - {{ chapter.attributes.volume }} </span>
+        <div class="manga-info">
+          <h1 class="manga-title">{{ mangaDetail().title }}</h1>
+          <div class="meta-row">
+            <span class="chip">{{ mangaDetail().status | titlecase }}</span>
+            @if (mangaDetail().yearLauch) { <span class="chip">{{ mangaDetail().yearLauch }}</span> }
+            <span class="chip">{{ mangaDetail().type | titlecase }}</span>
+          </div>
+          <div class="genre-row">
+            @for (g of genreList(); track g) {
+            <span class="genre-tag">{{ g }}</span>
             }
-            <span>
-              {{ chapter.type | titlecase }}:
-              {{ chapter.attributes.chapter || "none" }}
-            </span>
-            <span> Pages: {{ chapter.attributes.pages }} </span>
-            <span>
-              Published At: {{ chapter.attributes.publishAt | date }}
-            </span>
-          </a>
-        </li>
-        <hr />
-        }
-      </ul>
-
-      @if (chapterList.length >= 96) {
-      <c-pagination align="center" aria-label="Page navigation example">
-        <li cPageItem (click)="previousPage()">
-          <a cPageLink>Previous</a>
-        </li>
-        <li cPageItem>
-          <a cPageLink (click)="setPage(1)">1</a>
-        </li>
-        <li cPageItem>
-          <a cPageLink (click)="setPage(96)">2</a>
-        </li>
-        <li cPageItem>
-          <a cPageLink (click)="setPage(192)">3</a>
-        </li>
-        <li cPageItem (click)="nextPage()">
-          <a cPageLink>Next</a>
-        </li>
-      </c-pagination>
-      } } @else {
-      <div class="center-loading">
-        <c-spinner color="light"></c-spinner>
+          </div>
+          @if (mangaDetail().description) {
+          <p class="manga-description">{{ mangaDetail().description }}</p>
+          }
+        </div>
+      </div>
+      } @else {
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
       </div>
       }
-    </section>
+    </div>
+  </div>
+
+  <!-- Chapter List -->
+  <div class="chapters-section container">
+    <div class="chapters-header">
+      <h2 class="section-title">📖 {{ t('chapters') }}</h2>
+      <div class="chapter-controls">
+        <!-- Language Dropdown -->
+        <div class="custom-select">
+          <button class="ctrl-btn">🌐 {{ t('language') }}</button>
+          <div class="select-menu">
+            <button class="select-opt" (click)="setLanguage('')">{{ t('allGenres') }}</button>
+            @for (lang of languageList(); track lang) {
+            <button class="select-opt" (click)="setLanguage(lang)">
+              <img class="lang-flag" [src]="lang | showFlag" [alt]="lang" />
+              {{ lang | formatLanguage }}
+            </button>
+            }
+          </div>
+        </div>
+        <!-- Sort Order -->
+        <button class="ctrl-btn" (click)="toggleOrder()">
+          {{ orderAsc() ? '▲ ' + t('increasing') : '▼ ' + t('descending') }}
+        </button>
+      </div>
+    </div>
+
+    @if (loadingChapters()) {
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+    </div>
+    } @else if (chapterList().length === 0) {
+    <div class="empty-state">{{ t('noChapters') }}</div>
+    } @else {
+    <ul class="chapter-list fade-in">
+      @for (chapter of chapterList(); track chapter.id) {
+      <li>
+        <a class="chapter-row"
+          [routerLink]="['/chapter', chapter.id, mangaDetail().id, chapter.attributes.chapter, chapter.attributes.translatedLanguage]">
+          <span class="ch-lang">
+            <img class="lang-flag" [src]="chapter.attributes.translatedLanguage | showFlag"
+              [alt]="chapter.attributes.translatedLanguage" />
+          </span>
+          <span class="ch-num">Ch. {{ chapter.attributes.chapter || '—' }}</span>
+          @if (chapter.attributes.volume) {
+          <span class="ch-vol">Vol. {{ chapter.attributes.volume }}</span>
+          }
+          <span class="ch-pages">{{ chapter.attributes.pages }} {{ t('pages') }}</span>
+          <span class="ch-date">{{ chapter.attributes.publishAt | date:'mediumDate' }}</span>
+          <span class="ch-arrow">›</span>
+        </a>
+      </li>
+      }
+    </ul>
+
+    <!-- Pagination -->
+    <div class="pagination-row">
+      <button class="page-btn" (click)="prevPage()" [disabled]="page === 0">‹ {{ t('prev') }}</button>
+      <span class="page-info">Page {{ page / 28 + 1 }}</span>
+      <button class="page-btn" (click)="nextPage()" [disabled]="chapterList().length < 28">{{ t('next') }} ›</button>
+    </div>
+    }
   </div>
 </div>

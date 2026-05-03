@@ -1,154 +1,176 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { GetMangaService } from '../services/getManga.service';
-import { ImgModule } from '@coreui/angular';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterLink } from '@angular/router';
-import { cilArrowCircleTop, cilArrowCircleBottom } from '@coreui/icons';
-import { IconDirective } from '@coreui/icons-angular';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  signal,
+} from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { NavbarComponent } from '../navbar/navbar.component';
 import { ChangeFormatLanguagePipe } from '../pipe/formatLanguage.pipe';
 import { ShowFlagPipe } from '../pipe/showFlag.pipe';
-import {
-  PageItemDirective,
-  PageLinkDirective,
-  PaginationComponent,
-  ButtonModule,
-  SpinnerModule,
-  DropdownModule,
-} from '@coreui/angular';
+import { FavoritesService } from '../services/favorites.service';
+import { GetMangaService } from '../services/getManga.service';
+import { I18nService } from '../services/i18n.service';
 
 export interface typeDetailManga {
-  id: string,
-  title: string,
-  image: string,
-  description: string,
-  type: string,
-  genre: string[],
-  yearLauch: string,
-  status: string,
-  chapterList?: [string],
+  id: string;
+  title: string;
+  image: string;
+  description: string;
+  type: string;
+  genre: string[];
+  yearLauch: string;
+  status: string;
 }
 
 @Component({
   selector: 'app-manga-detail',
   standalone: true,
-  templateUrl: './manga-detail.component.html',
-  styleUrl: './manga-detail.component.scss',
   imports: [
-    DropdownModule,
-    ShowFlagPipe,
-    ChangeFormatLanguagePipe,
-    IconDirective,
-    ButtonModule,
-    ImgModule,
     CommonModule,
     RouterModule,
-    PaginationComponent,
-    PageItemDirective,
-    PageLinkDirective,
-    RouterLink,
-    SpinnerModule,
-  ]
+    NavbarComponent,
+    ShowFlagPipe,
+    ChangeFormatLanguagePipe,
+  ],
+  templateUrl: './manga-detail.component.html',
+  styleUrl: './manga-detail.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MangaDetailComponent {
-  mangaDetail = <typeDetailManga>{};
-  genreList: string[] = []
-  chapterList: any[] = []
-  page = 0
-  limite = 96
-  orderAsc = true
-  icons = { cilArrowCircleTop, cilArrowCircleBottom };
-  showMangaList = false
-  showMangaData = false
-  languageDisplay = []
-  languageList = []
-  codeLanguage = ''
+export class MangaDetailComponent implements OnInit {
+  mangaDetail = signal<typeDetailManga>({
+    id: '',
+    title: '',
+    image: '',
+    description: '',
+    type: '',
+    genre: [],
+    yearLauch: '',
+    status: '',
+  });
+  chapterList = signal<any[]>([]);
+  genreList = signal<string[]>([]);
+  languageList = signal<string[]>([]);
+  loadingData = signal(true);
+  loadingChapters = signal(true);
+  orderAsc = signal(true);
+  codeLanguage = '';
+  page = 0;
 
-  constructor(private route: ActivatedRoute, private mangaService: GetMangaService) { }
+  constructor(
+    private route: ActivatedRoute,
+    private mangaService: GetMangaService,
+    public favoritesService: FavoritesService,
+    public i18nService: I18nService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
-  ngOnInit() {
-    const mangaRouterTitle: string = this.route.snapshot.paramMap.get('title') || '';
-    const mangaRouterImage: string = this.route.snapshot.paramMap.get('image') || '';
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id') || '';
+    const title = this.route.snapshot.paramMap.get('title') || '';
+    const image = this.route.snapshot.paramMap.get('image') || '';
 
-    this.mangaDetail.title = mangaRouterTitle
-    this.mangaDetail.image = mangaRouterImage
-
-    this.setMangaByTitle(mangaRouterTitle)
+    this.mangaDetail.update((d) => ({ ...d, id, title, image }));
+    if (id) {
+      this.loadById(id, title, image);
+    } else {
+      this.loadByTitle(title, image);
+    }
   }
 
-  getMangaChapterList(id_manga: string, language?: string) {
-    this.mangaService.getMangaChapterList(
-      id_manga,
-      this.page,
-      this.orderAsc ? 'asc' : 'desc',
-      language)
-      .subscribe({
-        next: (mangaDetailData: any) => {
-          if (mangaDetailData.total < 96) {
-            this.page = mangaDetailData.total
-          }
-
-          this.chapterList = mangaDetailData.data;
-        },
-        error: (error) => { console.error(error) },
-        complete: () => {
-          this.showMangaList = true
-          this.mangaService.getMangaChapterList(
-            id_manga,
-            this.page,
-            this.orderAsc ? 'asc' : 'desc')
-            .subscribe().unsubscribe();
-        }
-      })
+  t(key: string): string {
+    return this.i18nService.t(key);
   }
 
-  setMangaByTitle(mangaRouterTitle: string) {
-    this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe({
-      next: (mangaDetailData: any) => {
-        this.mangaDetail.status = mangaDetailData.data[0].attributes.status
-        this.mangaDetail.id = mangaDetailData.data[0].id
-
-        this.mangaDetail.description = mangaDetailData.data[0].attributes.description.en
-        this.mangaDetail.type = mangaDetailData.data[0].type
-        this.mangaDetail.yearLauch = mangaDetailData.data[0].attributes.year
-        this.languageList = mangaDetailData.data[0].attributes.availableTranslatedLanguages;
-
-        mangaDetailData.data[0].attributes.tags.forEach((element: any, i: number) => {
-          this.genreList[i] = element.attributes.name.en
-        });
-
-        this.getMangaChapterList(this.mangaDetail.id)
+  private loadById(id: string, title: string, image: string): void {
+    this.mangaService.getMangaByTitle(title).subscribe({
+      next: (data: any) => {
+        const item = data.data.find((m: any) => m.id === id) ?? data.data[0];
+        this.processDetail(item, image);
       },
-      error: (error) => { console.error(error) },
-      complete: () => {
-        this.showMangaData = true
-        this.mangaService.getMangaByTitle(mangaRouterTitle).subscribe().unsubscribe()
-      }
     });
   }
 
-  toggleOrder() {
-    this.orderAsc = !this.orderAsc
-    this.page = 0
-    this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
+  private loadByTitle(title: string, image: string): void {
+    this.mangaService.getMangaByTitle(title).subscribe({
+      next: (data: any) => {
+        if (data.data[0]) this.processDetail(data.data[0], image);
+      },
+    });
   }
 
-  nextPage() {
-    this.page += 96
-    this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
+  private processDetail(item: any, image: string): void {
+    const genres = item.attributes.tags.map((t: any) => t.attributes.name.en);
+    this.genreList.set(genres);
+    this.languageList.set(item.attributes.availableTranslatedLanguages || []);
+    this.mangaDetail.set({
+      id: item.id,
+      title: this.mangaService.getMangaTitle(item),
+      image,
+      description: item.attributes.description?.en || '',
+      type: item.type,
+      genre: genres,
+      yearLauch: item.attributes.year,
+      status: item.attributes.status,
+    });
+    this.loadingData.set(false);
+    this.cdr.markForCheck();
+    this.loadChapters(item.id);
   }
 
-  setPage(pageNumber: number) {
-    this.page = pageNumber
-    this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
+  loadChapters(id: string, lang?: string): void {
+    this.loadingChapters.set(true);
+    this.mangaService
+      .getMangaChapterList(
+        id,
+        this.page,
+        this.orderAsc() ? 'asc' : 'desc',
+        lang,
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.chapterList.set(data.data);
+          this.loadingChapters.set(false);
+          this.cdr.markForCheck();
+        },
+      });
   }
 
-  previousPage() {
-    this.page -= 96
-    this.getMangaChapterList(this.mangaDetail.id, this.codeLanguage)
+  toggleOrder(): void {
+    this.orderAsc.update((v) => !v);
+    this.page = 0;
+    this.loadChapters(this.mangaDetail().id, this.codeLanguage || undefined);
   }
 
-  getLanguage(lang: string) {
-    this.getMangaChapterList(this.mangaDetail.id, lang)
+  setLanguage(lang: string): void {
+    this.codeLanguage = lang;
+    this.page = 0;
+    this.loadChapters(this.mangaDetail().id, lang || undefined);
+  }
+
+  nextPage(): void {
+    this.page += 28;
+    this.loadChapters(this.mangaDetail().id, this.codeLanguage || undefined);
+  }
+  prevPage(): void {
+    if (this.page >= 28) {
+      this.page -= 28;
+      this.loadChapters(this.mangaDetail().id, this.codeLanguage || undefined);
+    }
+  }
+
+  toggleFav(): void {
+    const d = this.mangaDetail();
+    this.favoritesService.toggle({ id: d.id, title: d.title, image: d.image });
+  }
+
+  isFav(): boolean {
+    return this.favoritesService.isFavorite(this.mangaDetail().id);
+  }
+
+  trackById(_: number, item: any): string {
+    return item.id;
   }
 }
