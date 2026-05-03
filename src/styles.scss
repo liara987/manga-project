@@ -1,17 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
 @import "@coreui/coreui/scss/coreui";
-@import "bootstrap/dist/css/bootstrap.min.css";
-@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Nunito:wght@400;500;600;700&display=swap");
 
-body,
-p {
-  margin: 0;
-  color: #fff;
-  font-family: Lato, Helvetica Neue, helvetica, sans-serif;
-  font-weight: 500;
+// ── THEME TOKENS ──────────────────────────────────────────────
+:root,
+[data-theme="dark"] {
+  --bg: #0d0d12;
+  --bg2: #13131a;
+  --nav-bg: rgba(13, 13, 18, 0.92);
+  --card-bg: #1a1a24;
+  --card-hover: #22222e;
+  --text: #f0f0f5;
+  --text-muted: #8888aa;
+  --accent: #e8473f;
+  --accent2: #ff6b5b;
+  --border: rgba(255, 255, 255, 0.08);
+  --input-bg: rgba(255, 255, 255, 0.06);
+  --hover: rgba(255, 255, 255, 0.06);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --chip-bg: rgba(232, 71, 63, 0.15);
+  --chip-text: #ff8878;
+  --spinner: #e8473f;
 }
 
-.main {
+[data-theme="light"] {
+  --bg: #f4f4f8;
+  --bg2: #eaeaf0;
+  --nav-bg: rgba(244, 244, 248, 0.95);
+  --card-bg: #ffffff;
+  --card-hover: #f0f0f8;
+  --text: #1a1a2e;
+  --text-muted: #666680;
+  --accent: #e8473f;
+  --accent2: #c0392b;
+  --border: rgba(0, 0, 0, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.04);
+  --hover: rgba(0, 0, 0, 0.04);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --chip-bg: rgba(232, 71, 63, 0.1);
+  --chip-text: #c0392b;
+  --spinner: #e8473f;
+}
+
+// ── RESET & BASE ──────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: "Nunito", system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
   overflow-x: hidden;
 }
 
@@ -19,33 +69,169 @@ a {
   text-decoration: none;
   color: inherit;
 }
-
 ul {
+  list-style: none;
   padding: 0;
   margin: 0;
 }
-
-li {
-  list-style-type: none;
-}
-
-body {
-  background-color: black;
-}
-
 button {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  font-size: inherit;
   cursor: pointer;
-  text-decoration: none;
 }
 
+.main {
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+// ── SCROLLBAR ─────────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg2);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+// ── UTILITIES ─────────────────────────────────────────────────
 .container {
-  margin: 0;
+  margin: 0 auto;
   padding: 0 1.25rem;
-  width: 100vw;
-  max-width: none;
+  max-width: 1600px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 2.5rem;
+  }
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Cinzel", serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+
+  .brand-icon {
+    font-size: 1.3rem;
+  }
+
+  .brand-text {
+    display: none;
+
+    @media (min-width: 480px) {
+      display: block;
+    }
+  }
+}
+
+.section-title {
+  font-family: "Cinzel", serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  &::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    margin-left: 0.75rem;
+  }
+}
+
+.spinner-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease;
+}
+.fade-in-up {
+  animation: fadeInUp 0.4s ease;
+}
+
+// ── CARD GRID ─────────────────────────────────────────────────
+.manga-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  @media (min-width: 1280px) {
+    grid-template-columns: repeat(7, 1fr);
+  }
+  @media (min-width: 1600px) {
+    grid-template-columns: repeat(9, 1fr);
+  }
+}
+
+// ── CHIP ──────────────────────────────────────────────────────
+.chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 71, 63, 0.25);
+  white-space: nowrap;
 }
