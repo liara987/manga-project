@@ -1,31 +1,70 @@
-<div class="app-read-chapter">
-  <header class="chapter-control">
-    <button (click)="prev()" cButton color="dark" name="previous chapter">
-      <svg [cIcon]="icons.cilChevronLeft" size="lg"></svg>
-    </button>
-    <c-dropdown>
-      <button cButton cDropdownToggle color="secondary">Chapter List</button>
-      <ul cDropdownMenu>
-        @for (chap of chapterList; track $index) {
-        <li>
-          <a
-            cDropdownItem
-            (click)="onChapterClick(chap.id, chap.others, chap.chapter)"
-          >
-            {{ chap.chapter }}
-          </a>
-        </li>
-        }
-      </ul>
-    </c-dropdown>
-    <button (click)="next()" cButton color="dark" name="next chapter">
-      <svg [cIcon]="icons.cilChevronRight" size="lg"></svg>
-    </button>
+<div class="reader-page" [class.focus-mode]="focusMode()">
+
+  <!-- Top Bar -->
+  <header class="reader-header" [class.hidden]="focusMode()">
+    <div class="nav-left">
+      <a class="nav-brand" routerLink="/home">
+        <span class="brand-icon">⛩</span>
+        <span class="brand-text">MangaProject</span>
+      </a>
+    </div>
+
+    <span class="chapter-label">Chapter {{ chapterNumber }}</span>
+    <div class="reader-controls">
+      <button class="reader-btn" (click)="prev()" [disabled]="!hasPrev()" title="Previous">‹ {{ t('prev') }}</button>
+      <button class="reader-btn list-toggle" (click)="toggleChapterList()">☰ {{ t('chapterList') }}</button>
+      <button class="reader-btn" (click)="next()" [disabled]="!hasNext()" title="Next">{{ t('next') }} ›</button>
+      <button class="reader-btn focus-btn" (click)="toggleFocus()" title="Focus Mode (F)">⊡ {{ t('focusMode')
+        }}</button>
+    </div>
   </header>
-  @for (image of images; track $index) {
-  <figure>
-    <img cImg fluid src="{{ image }}" alt="" />
-  </figure>
+
+  <!-- Focus mode exit -->
+  @if (focusMode()) {
+  <div class="focus-exit-hint" (click)="toggleFocus()">
+    {{ t('exitFocus') }} (F or click)
+  </div>
   }
+
+  <!-- Chapter List Panel -->
+  @if (showChapterList()) {
+  <div class="chapter-panel">
+    <div class="chapter-panel-header">
+      <span>{{ t('chapterList') }}</span>
+      <button class="close-btn" (click)="showChapterList.set(false)">✕</button>
+    </div>
+    <ul class="chapter-panel-list">
+      @for (ch of chapterList(); track ch.id) {
+      <li>
+        <button class="panel-ch-btn" [class.active]="ch.chapter == chapterNumber"
+          (click)="navigateTo(ch.id, ch.others || [], ch.chapter)">Ch. {{ ch.chapter }}</button>
+      </li>
+      }
+    </ul>
+  </div>
+  }
+
+  <!-- Pages -->
+  <main class="reader-content">
+    @if (loading()) {
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+    </div>
+    } @else {
+    @for (img of images(); track trackByIndex($index)) {
+    <div class="page-wrap">
+      <img class="page-img" [src]="img" [alt]="'Page ' + ($index + 1)" loading="lazy" />
+    </div>
+    }
+    }
+  </main>
+
+  <!-- Bottom Nav -->
+  <footer class="reader-footer" [class.hidden]="focusMode()">
+    <button class="reader-btn large" (click)="prev()" [disabled]="!hasPrev()">‹ {{ t('prev') }}</button>
+    <span class="chapter-label">Ch. {{ chapterNumber }}</span>
+    <button class="reader-btn large" (click)="next()" [disabled]="!hasNext()">{{ t('next') }} ›</button>
+  </footer>
+
   <app-go-to-top></app-go-to-top>
 </div>
