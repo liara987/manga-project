@@ -1,23 +1,28 @@
-import { Component } from '@angular/core';
-import { cilArrowThickTop } from '@coreui/icons';
-import { ImgModule, ButtonDirective } from '@coreui/angular';
-import { IconDirective } from '@coreui/icons-angular';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  signal,
+} from '@angular/core';
 
 @Component({
   selector: 'app-go-to-top',
   standalone: true,
-  imports: [IconDirective, ImgModule, ButtonDirective,],
-  templateUrl: './go-to-top.component.html',
-  styleUrl: './go-to-top.component.scss'
+  imports: [CommonModule],
+  template: './go-to-top.component.html',
+  styleUrl: './go-to-top.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GoToTopComponent {
-  icons = { cilArrowThickTop };
+  visible = signal(false);
 
-  onClickGoToTop() {
-    window.scroll({
-      top: 0,
-      left: 0,
-      behavior: 'smooth'
-    });
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.visible.set(window.scrollY > 400);
+  }
+
+  scrollTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
