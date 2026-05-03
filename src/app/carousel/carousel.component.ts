@@ -1,87 +1,126 @@
-import { Component, Input } from '@angular/core';
-import { CarouselModule } from '@coreui/angular';
+import { CommonModule } from '@angular/common';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common'
-import { ButtonComponent } from "../button/button.component";
 import { GetMangaService } from '../services/getManga.service';
 
-export interface typeSlides {
+interface Slide {
   id: string;
-  src: string;
+  mangaId: string;
   title: string;
   subtitle: string;
-  logo: string;
-  cover: any;
+  bg: string;
+  cover: string;
 }
+
 @Component({
   selector: 'app-carousel',
   standalone: true,
+  imports: [RouterModule, CommonModule],
   templateUrl: './carousel.component.html',
   styleUrl: './carousel.component.scss',
-  imports: [
-    CarouselModule,
-    RouterModule,
-    CommonModule,
-    ButtonComponent
-  ]
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CarouselComponent {
-  slides: typeSlides[] = new Array(3).fill(
+export class CarouselComponent implements OnInit, OnDestroy {
+  slides = signal<Slide[]>([]);
+  currentIndex = signal(0);
+  private timer: any;
+
+  private FEATURED = [
     {
-      id: '',
-      src: '',
-      title: '',
-      subtitle: '',
-      logo: '',
-      cover: ''
-    });
-  constructor(private mangaService: GetMangaService) { }
-
-  ngOnInit() {
-    this.slides[0] = {
-      id: '',
-      src: '../assets/images/slide1.webp',
-      title: '',
-      subtitle: '',
+      title: 'One Piece',
+      bg: '../assets/images/slide1.webp',
       logo: '../assets/images/logo1.webp',
-      cover: ''
-    }
-
-    this.slides[1] = {
-      id: '',
-      src: '../assets/images/slide2.webp',
-      title: '',
-      subtitle: '',
+    },
+    {
+      title: 'Solo Leveling',
+      bg: '../assets/images/slide2.webp',
       logo: '../assets/images/logo2.webp',
-      cover: ''
-    }
-
-    this.slides[2] = {
-      id: '',
-      src: '../assets/images/slide3.webp',
-      title: '',
-      subtitle: '',
+    },
+    {
+      title: 'Shangri-la Frontier',
+      bg: '../assets/images/slide3.webp',
       logo: '../assets/images/logo3.png',
-      cover: ''
-    }
+    },
+  ];
 
-    this.setTitleAndCover('One Piece', 0)
-    this.setTitleAndCover('Solo Leveling', 1)
-    this.setTitleAndCover('Shangri-la Frontier', 2)
+  constructor(
+    private mangaService: GetMangaService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.FEATURED.forEach((feat, i) => {
+      this.mangaService.getMangaByTitle(feat.title).subscribe({
+        next: (data: any) => {
+          const item = data.data[0];
+          if (!item) return;
+
+          const coverId = this.mangaService.getCoverId(item);
+
+          this.mangaService
+            .getCoverFileName(coverId)
+            .subscribe((cover: any) => {
+              const fileName = cover.data.attributes.fileName;
+
+              const mangaId = cover.data.relationships.find(
+                ({ type }: any) => type === 'manga',
+              ).id;
+
+              const slide: Slide = {
+                id: item.id,
+                mangaId,
+                title: feat.title,
+                subtitle:
+                  (
+                    item.attributes.description?.en ||
+                    item.attributes.description[0]
+                  ).slice(0, 160) + '…',
+                bg: feat.bg,
+                cover: this.mangaService.getMangaCover(mangaId, fileName),
+              };
+
+              const current = [...this.slides()];
+              current[i] = slide;
+              this.slides.set([...current.filter(Boolean)]);
+              this.cdr.markForCheck();
+            });
+        },
+      });
+    });
+    this.startTimer();
   }
 
-  setTitleAndCover(title: string, index: number) {
-    this.slides[index].title = title
+  ngOnDestroy(): void {
+    clearInterval(this.timer);
+  }
 
-    this.mangaService.getMangaByTitle(title).subscribe((mangaByTitle) => {
-      this.slides[index].id = this.mangaService.getCoverId(mangaByTitle.data[0])
-      this.slides[index].subtitle = mangaByTitle.data[0].attributes.description.en
+  startTimer(): void {
+    this.timer = setInterval(() => {
+      this.next();
+      this.cdr.markForCheck();
+    }, 5000);
+  }
 
-      this.mangaService.getCoverFileName(this.slides[index].id).subscribe((cover: any) => {
-        const coverFileName = cover.data.attributes.fileName
-        const coverId = cover.data.relationships.find(({ type }: any) => type === 'manga').id
-        this.slides[index].cover = this.mangaService.getMangaCover(coverId, coverFileName)
-      })
-    })
+  next(): void {
+    this.currentIndex.update(
+      (i) => (i + 1) % Math.max(1, this.slides().length),
+    );
+  }
+  prev(): void {
+    this.currentIndex.update(
+      (i) => (i - 1 + this.slides().length) % this.slides().length,
+    );
+  }
+  goTo(i: number): void {
+    this.currentIndex.set(i);
+    clearInterval(this.timer);
+    this.startTimer();
   }
 }

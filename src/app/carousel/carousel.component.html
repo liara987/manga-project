@@ -1,44 +1,25 @@
-<c-carousel
-  class="app-carousel"
-  [animate]="false"
-  transition="crossfade"
-  [interval]="0"
->
-  <c-carousel-inner>
-    @for (slide of slides; track $index) {
-    <c-carousel-item>
-      <img
-        [src]="slide.src"
-        alt="{{ slide.title }}"
-        class="d-block w-100 carousel-image"
-        loading="lazy"
-      />
-      <c-carousel-caption>
-        <aside class="side-content">
-          <img
-            class="carousel-logo"
-            [src]="slide.logo"
-            alt="{{ slide.title }} logo"
-          />
-          <p class="carousel-subtitle d-none d-md-block">
-            {{ slide.subtitle }}
-          </p>
-          <a [routerLink]="['/manga', slide.title, slide.cover]">
-            <app-button text="read now"></app-button>
-          </a>
-        </aside>
-      </c-carousel-caption>
-    </c-carousel-item>
+<div class="carousel" role="region" aria-label="Featured Manga">
+  @for (slide of slides(); track slide.id; let i = $index) {
+  <div class="slide" [class.active]="i === currentIndex()" [style.background-image]="'url(' + slide.bg + ')'">
+    <div class="slide-overlay"></div>
+    <div class="slide-content container">
+      <div class="slide-text">
+        <h2 class="slide-title">{{ slide.title }}</h2>
+        <p class="slide-desc">{{ slide.subtitle }}</p>
+        <a class="slide-cta" [routerLink]="['/manga', slide.id, slide.title, slide.cover]">Read Now ›
+        </a>
+      </div>
+      <img class="slide-cover" [src]="slide.cover" [alt]="slide.title" loading="lazy" />
+    </div>
+  </div>
+  }
+
+  <button class="carousel-btn prev" (click)="prev()" aria-label="Previous">‹</button>
+  <button class="carousel-btn next" (click)="next()" aria-label="Next">›</button>
+
+  <div class="dots">
+    @for (slide of slides(); track slide.id; let i = $index) {
+    <button class="dot" [class.active]="i === currentIndex()" (click)="goTo(i)"></button>
     }
-  </c-carousel-inner>
-  <c-carousel-control
-    [routerLink]
-    caption="Previous"
-    direction="prev"
-  ></c-carousel-control>
-  <c-carousel-control
-    [routerLink]
-    caption="Next"
-    direction="next"
-  ></c-carousel-control>
-</c-carousel>
+  </div>
+</div>
