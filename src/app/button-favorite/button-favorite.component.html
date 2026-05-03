@@ -1,0 +1,7 @@
+<button
+      class="fav-btn"
+      [class.active]="favoritesService.isFavorite(cardContent.id)"
+      (click)="onClick($event)"
+      [title]="favoritesService.isFavorite(cardContent.id) ? 'Remove from favorites' : 'Add to favorites'">
+      {{ favoritesService.isFavorite(cardContent.id) ? '❤️' : '🤍' }}
+    </button>
