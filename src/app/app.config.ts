@@ -1,18 +1,22 @@
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter } from '@angular/router';
+import {
+  PreloadAllModules,
+  provideRouter,
+  withPreloading,
+} from '@angular/router';
 import { routes } from './app.routes';
-
-import { GetMangaService } from './services/getManga.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     provideAnimationsAsync(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
     { provide: LocationStrategy, useClass: HashLocationStrategy },
-    GetMangaService,
   ],
 };
