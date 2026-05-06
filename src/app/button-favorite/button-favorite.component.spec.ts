@@ -14,6 +14,11 @@ describe('ButtonFavoriteComponent', () => {
 
     fixture = TestBed.createComponent(ButtonFavoriteComponent);
     component = fixture.componentInstance;
+    component.cardContent = {
+      id: 'manga-1',
+      image: '/cover/manga-1.jpg',
+      title: 'One Piece',
+    };
     fixture.detectChanges();
   });
 
