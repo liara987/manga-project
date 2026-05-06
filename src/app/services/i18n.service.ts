@@ -36,6 +36,10 @@ const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     clearFilters: 'Clear',
     allGenres: 'All Genres',
     nofavorites: 'No favorites yet. Add manga you love!',
+    contentRating: 'Content Rating',
+    noResults: 'No manga found for selected filters.',
+    errorLoad: 'Failed to load. Please try again.',
+    retry: 'Retry',
   },
   pt: {
     home: 'Início',
