@@ -67,7 +67,7 @@ export class CarouselComponent implements OnInit, OnDestroy {
           this.mangaService
             .getCoverFileName(coverId)
             .subscribe((cover: any) => {
-              const fileName = cover.data.attributes.fileName;
+              const fileName = cover.data?.attributes.fileName;
 
               const mangaId = cover.data.relationships.find(
                 ({ type }: any) => type === 'manga',
@@ -79,8 +79,9 @@ export class CarouselComponent implements OnInit, OnDestroy {
                 title: feat.title,
                 subtitle:
                   (
-                    item.attributes.description?.en ||
-                    item.attributes.description[0]
+                    item?.attributes.description['en'] ||
+                    Object.values(item?.attributes.description)[0] ||
+                    'No description'
                   ).slice(0, 160) + '…',
                 bg: feat.bg,
                 cover: this.mangaService.getMangaCover(mangaId, fileName),

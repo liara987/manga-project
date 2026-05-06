@@ -88,6 +88,7 @@ export class MangaDetailComponent implements OnInit {
     this.mangaService.getMangaByTitle(title).subscribe({
       next: (data: any) => {
         const item = data.data.find((m: any) => m.id === id) ?? data.data[0];
+        if (!item) return;
         this.processDetail(item, image);
       },
     });
@@ -102,18 +103,18 @@ export class MangaDetailComponent implements OnInit {
   }
 
   private processDetail(item: any, image: string): void {
-    const genres = item.attributes.tags.map((t: any) => t.attributes.name.en);
+    const genres = item?.attributes.tags.map((t: any) => t?.attributes.name.en);
     this.genreList.set(genres);
-    this.languageList.set(item.attributes.availableTranslatedLanguages || []);
+    this.languageList.set(item?.attributes.availableTranslatedLanguages || []);
     this.mangaDetail.set({
       id: item.id,
       title: this.mangaService.getMangaTitle(item),
       image,
-      description: item.attributes.description?.en || '',
+      description: item?.attributes.description?.en || '',
       type: item.type,
       genre: genres,
-      yearLauch: item.attributes.year,
-      status: item.attributes.status,
+      yearLauch: item?.attributes.year,
+      status: item?.attributes.status,
     });
     this.loadingData.set(false);
     this.cdr.markForCheck();

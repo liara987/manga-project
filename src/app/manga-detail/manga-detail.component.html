@@ -74,17 +74,18 @@
       @for (chapter of chapterList(); track chapter.id) {
       <li>
         <a class="chapter-row"
-          [routerLink]="['/chapter', chapter.id, mangaDetail().id, chapter.attributes.chapter, chapter.attributes.translatedLanguage]">
+          [routerLink]="['/chapter', chapter.id, mangaDetail().id, chapter?.attributes.chapter, chapter?.attributes.translatedLanguage]"
+          [queryParams]="{ title: mangaDetail().title, image: mangaDetail().image }">
           <span class="ch-lang">
-            <img class="lang-flag" [src]="chapter.attributes.translatedLanguage | showFlag"
-              [alt]="chapter.attributes.translatedLanguage" />
+            <img class="lang-flag" [src]="chapter?.attributes.translatedLanguage | showFlag"
+              [alt]="chapter?.attributes.translatedLanguage" />
           </span>
-          <span class="ch-num">Ch. {{ chapter.attributes.chapter || '—' }}</span>
-          @if (chapter.attributes.volume) {
-          <span class="ch-vol">Vol. {{ chapter.attributes.volume }}</span>
+          <span class="ch-num">Ch. {{ chapter?.attributes.chapter || '—' }}</span>
+          @if (chapter?.attributes.volume) {
+          <span class="ch-vol">Vol. {{ chapter?.attributes.volume }}</span>
           }
-          <span class="ch-pages">{{ chapter.attributes.pages }} {{ t('pages') }}</span>
-          <span class="ch-date">{{ chapter.attributes.publishAt | date:'mediumDate' }}</span>
+          <span class="ch-pages">{{ chapter?.attributes.pages }} {{ t('pages') }}</span>
+          <span class="ch-date">{{ chapter?.attributes.publishAt | date:'mediumDate' }}</span>
           <span class="ch-arrow">›</span>
         </a>
       </li>
