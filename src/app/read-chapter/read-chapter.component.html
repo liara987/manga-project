@@ -7,9 +7,15 @@
         <span class="brand-icon">⛩</span>
         <span class="brand-text">MangaProject</span>
       </a>
+      <button class="reader-btn back-details-btn" type="button" (click)="goToDetails()" [disabled]="!id_manga"
+        aria-label="Voltar aos detalhes do manga" title="Voltar aos detalhes do manga">
+        <span class="back-icon" aria-hidden="true">&larr;</span>
+        <span>Detalhes do manga</span>
+      </button>
     </div>
 
-    <span class="chapter-label">Chapter {{ chapterNumber }}</span>
+    <span class="chapter-label">
+      Chapter {{ chapterNumber }}</span>
     <div class="reader-controls">
       <button class="reader-btn" (click)="prev()" [disabled]="!hasPrev()" title="Previous">‹ {{ t('prev') }}</button>
       <button class="reader-btn list-toggle" (click)="toggleChapterList()">☰ {{ t('chapterList') }}</button>

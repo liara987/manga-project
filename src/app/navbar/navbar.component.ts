@@ -94,23 +94,26 @@ export class NavbarComponent {
     this.mangaService.getMangaByTitle(title).subscribe({
       next: (mangaData: any) => {
         this.listResult = [];
-        mangaData.data.slice(0, 8).forEach((mangaItem: any) => {
-          const coverId = this.mangaService.getCoverId(mangaItem);
-          this.mangaService
-            .getCoverFileName(coverId)
-            .subscribe((cover: any) => {
-              const fileName = cover.data.attributes.fileName;
-              const mangaID = cover.data.relationships.find(
-                ({ type }: any) => type === 'manga',
-              ).id;
-              this.listResult.push({
-                id: mangaItem.id,
-                title: this.mangaService.getMangaTitle(mangaItem),
-                image: this.mangaService.getMangaCover(mangaID, fileName),
+        this.mangaService
+          .dedup(mangaData.data ?? [])
+          .slice(0, 8)
+          .forEach((mangaItem: any) => {
+            const coverId = this.mangaService.getCoverId(mangaItem);
+            this.mangaService
+              .getCoverFileName(coverId)
+              .subscribe((cover: any) => {
+                const fileName = cover.data?.attributes.fileName;
+                const mangaID = cover.data.relationships.find(
+                  ({ type }: any) => type === 'manga',
+                ).id;
+                this.listResult.push({
+                  id: mangaItem.id,
+                  title: this.mangaService.getMangaTitle(mangaItem),
+                  image: this.mangaService.getMangaCover(mangaID, fileName),
+                });
+                this.showResults = true;
               });
-              this.showResults = true;
-            });
-        });
+          });
       },
     });
   }

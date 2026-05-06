@@ -19,6 +19,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'manga/:id',
+    loadComponent: () =>
+      import('./manga-detail/manga-detail.component').then(
+        (m) => m.MangaDetailComponent,
+      ),
+  },
+  {
     path: 'manga/:id/:title/:image',
     loadComponent: () =>
       import('./manga-detail/manga-detail.component').then(
