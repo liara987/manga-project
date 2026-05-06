@@ -4,35 +4,59 @@
 
   <div class="home-content container">
 
-    <!-- Popular Section -->
+    <!-- Popular Section — Horizontal Carousel -->
     <section class="manga-section">
       <h2 class="section-title">🔥 {{ t('popular') }}</h2>
       @if (loadingSection()) {
-        <div class="spinner-wrap"><div class="spinner"></div></div>
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
+      } @else if (errorSection()) {
+      <div class="state-box error">
+        <span class="state-icon">⚠️</span>
+        <p>Failed to load. Check your connection.</p>
+      </div>
+      } @else if (popularMangas().length === 0) {
+      <div class="state-box empty">
+        <span class="state-icon">📭</span>
+        <p>No popular manga found for this language.</p>
+      </div>
       } @else {
-        <div class="manga-grid">
-          @for (card of popularMangas(); track card.id) {
-            <a [routerLink]="['/manga', card.id, card.title, card.image]">
-              <app-card [cardContent]="card"></app-card>
-            </a>
-          }
-        </div>
+      <div class="hscroll-row">
+        @for (card of popularMangas(); track card.id) {
+        <a class="hscroll-item" [routerLink]="['/manga', card.id, card.title, card.image]">
+          <app-card [cardContent]="card"></app-card>
+        </a>
+        }
+      </div>
       }
     </section>
 
-    <!-- Recently Updated Section -->
+    <!-- Recently Updated Section — Horizontal Carousel -->
     <section class="manga-section">
       <h2 class="section-title">🕐 {{ t('recent') }}</h2>
       @if (loadingSection()) {
-        <div class="spinner-wrap"><div class="spinner"></div></div>
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
+      } @else if (errorSection()) {
+      <div class="state-box error">
+        <span class="state-icon">⚠️</span>
+        <p>Failed to load. Check your connection.</p>
+      </div>
+      } @else if (recentMangas().length === 0) {
+      <div class="state-box empty">
+        <span class="state-icon">📭</span>
+        <p>No recent manga found for this language.</p>
+      </div>
       } @else {
-        <div class="manga-grid">
-          @for (card of recentMangas(); track card.id) {
-            <a [routerLink]="['/manga', card.id, card.title, card.image]">
-              <app-card [cardContent]="card"></app-card>
-            </a>
-          }
-        </div>
+      <div class="hscroll-row">
+        @for (card of recentMangas(); track card.id) {
+        <a class="hscroll-item" [routerLink]="['/manga', card.id, card.title, card.image]">
+          <app-card [cardContent]="card"></app-card>
+        </a>
+        }
+      </div>
       }
     </section>
 
@@ -40,49 +64,81 @@
     <section class="manga-section">
       <div class="section-header">
         <h2 class="section-title">📚 All Manga</h2>
-        <button class="filter-toggle-btn" (click)="showFilters = !showFilters">
-          🎭 {{ t('filterGenres') }}
-          @if (selectedGenres.length > 0) { <span class="filter-count">{{ selectedGenres.length }}</span> }
-        </button>
+        <div class="filter-actions">
+          <!-- Content Rating Toggle -->
+          <div class="rating-toggles">
+            @for (r of allRatings; track r) {
+            <button class="rating-chip" [class.active]="isRatingActive(r)" (click)="toggleRating(r)" [title]="r">
+              {{ r }}
+            </button>
+            }
+          </div>
+          <button class="filter-toggle-btn" (click)="showFilters = !showFilters">
+            🎭 {{ t('filterGenres') }}
+            @if (selectedGenres.length > 0) { <span class="filter-count">{{ selectedGenres.length }}</span> }
+          </button>
+        </div>
       </div>
 
       @if (showFilters) {
-        <div class="genre-filters fade-in">
-          <div class="genre-chips">
-            @for (genre of allGenres; track genre) {
-              <button
-                class="genre-chip"
-                [class.selected]="isSelectedGenre(genre)"
-                (click)="toggleGenre(genre)"
-              >{{ genre }}</button>
-            }
-          </div>
-          @if (selectedGenres.length > 0) {
-            <button class="clear-btn" (click)="clearGenres()">✕ {{ t('clearFilters') }}</button>
+      <div class="genre-filters fade-in">
+        <div class="genre-chips">
+          @for (genre of allGenres(); track genre) {
+          <button class="genre-chip" [class.selected]="isSelectedGenre(genre.id)" (click)="toggleGenre(genre.id)">
+            {{ genre.name }}
+          </button>
           }
         </div>
+        <div class="filter-footer-row">
+          @if (selectedGenres.length > 0) {
+          <button class="clear-btn" (click)="clearGenres()">✕ {{ t('clearFilters') }}</button>
+          }
+          <button class="apply-btn" (click)="applyFilters(); showFilters = false">Apply</button>
+        </div>
+      </div>
       }
 
       @if (loading() && cardContent().length === 0) {
-        <div class="spinner-wrap"><div class="spinner"></div></div>
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+      </div>
+      } @else if (errorMain()) {
+      <div class="state-box error">
+        <span class="state-icon">⚠️</span>
+        <p>Something went wrong. Please try again.</p>
+        <button class="retry-btn" (click)="getManga()">
+          Retry
+        </button>
+      </div>
+      } @else if (!loading() && cardContent().length === 0) {
+      <div class="state-box empty">
+        <span class="state-icon">🔍</span>
+        <p>No manga found for the selected filters.</p>
+      </div>
       } @else {
-        <div class="manga-grid">
-          @for (card of cardContent(); track card.id) {
-            <a [routerLink]="['/manga', card.id, card.title, card.image]">
-              <app-card [cardContent]="card"></app-card>
-            </a>
-          }
-        </div>
-        @if (cardContent().length > 0) {
-          <div class="show-more-wrap">
-            <button class="show-more-btn" (click)="showMore()" [disabled]="loading()">
-              @if (loading()) { <span class="spinner-sm"></span> } @else { {{ t('showMore') }} ▾ }
-            </button>
-          </div>
+      <div class="manga-grid">
+        @for (card of cardContent(); track card.id) {
+        <a [routerLink]="['/manga', card.id, card.title, card.image]">
+          <app-card [cardContent]="card"></app-card>
+        </a>
         }
+      </div>
+      @if (cardContent().length > 0) {
+      <div class="show-more-wrap">
+        <button class="show-more-btn" (click)="showMore()" [disabled]="loading()">
+          @if (loading()) { <span class="spinner-sm"></span> } @else { {{ t('showMore') }} ▾ }
+        </button>
+      </div>
+      }
       }
     </section>
 
   </div>
+
   <app-go-to-top></app-go-to-top>
+
+  <!-- Global Footer -->
+  <footer class="app-footer">
+    <span>Powered by <a href="https://mangadex.org" target="_blank" rel="noopener">MangaDex API</a></span>
+  </footer>
 </div>

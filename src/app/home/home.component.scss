@@ -106,3 +106,97 @@
   animation: spin 0.7s linear infinite;
   vertical-align: middle;
 }
+
+/* ── Horizontal Scroll Carousel ─────────────────────────────────── */
+.hscroll-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar { height: 4px; }
+  &::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+}
+.hscroll-item {
+  flex: 0 0 160px;
+  scroll-snap-align: start;
+  text-decoration: none;
+}
+
+/* ── Content Rating Toggles ─────────────────────────────────────── */
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.rating-toggles { display: flex; gap: 0.35rem; }
+.rating-chip {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: border-color 0.2s, background 0.2s;
+  &.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+  &:disabled { opacity: 0.6; cursor: default; }
+}
+
+/* ── Filter apply row ───────────────────────────────────────────── */
+.filter-footer-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  justify-content: flex-end;
+}
+.apply-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.35rem 1rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  &:hover { opacity: 0.88; }
+}
+
+/* ── Empty / Error States ───────────────────────────────────────── */
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 2.5rem 1rem;
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  &.error { background: color-mix(in srgb, red 8%, var(--card-bg)); }
+  &.empty { background: var(--card-bg); }
+}
+.state-icon { font-size: 2rem; }
+.retry-btn {
+  margin-top: 0.25rem;
+  padding: 0.35rem 1.1rem;
+  border-radius: 2rem;
+  border: 1.5px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.82rem;
+  &:hover { background: var(--accent); color: #fff; }
+}
+
+/* ── Footer ─────────────────────────────────────────────────────── */
+.app-footer {
+  text-align: center;
+  padding: 1.25rem 1rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  a { color: var(--accent); text-decoration: none; &:hover { text-decoration: underline; } }
+}
