@@ -1,11 +1,22 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable, of, shareReplay } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { I18nService } from './i18n.service';
 
 const BASE_URL = '/api';
 const BASE_IMAGE_URL = '/cover';
 const CACHE_TTL = 5 * 60 * 1000;
+
+const LANG_TO_MANGADEX: Record<string, string> = {
+  en: 'en',
+  pt: 'pt-br',
+  es: 'es-la',
+  fr: 'fr',
+  ja: 'ja-ro',
+};
+
+export type ContentRating = 'safe' | 'suggestive' | 'erotica';
 
 interface CacheEntry<T> {
   data: T;
@@ -14,11 +25,16 @@ interface CacheEntry<T> {
 
 @Injectable({ providedIn: 'root' })
 export class GetMangaService {
-  public languages = ['en'];
+  public contentRatings: ContentRating[] = [];
+
   private cache = new Map<string, CacheEntry<any>>();
   private inFlight = new Map<string, Observable<any>>();
+  private http = inject(HttpClient);
+  private i18n = inject(I18nService);
 
-  constructor(private http: HttpClient) {}
+  get mangadexLang(): string {
+    return LANG_TO_MANGADEX[this.i18n.lang()] ?? 'en';
+  }
 
   private getCached<T>(key: string): T | null {
     const entry = this.cache.get(key);
@@ -49,47 +65,67 @@ export class GetMangaService {
     return obs;
   }
 
+  dedup<T extends { attributes: { title: Record<string, string> } }>(
+    items: T[],
+  ): T[] {
+    const seen = new Set<string>();
+    return items.filter((m) => {
+      const title = Object.values(m?.attributes.title)[0]?.toLowerCase() ?? '';
+      if (seen.has(title)) return false;
+      seen.add(title);
+      return true;
+    });
+  }
+
+  private baseParams(extra: Record<string, any> = {}): Record<string, any> {
+    return {
+      hasAvailableChapters: true,
+      'contentRating[]': this.contentRatings,
+      ...extra,
+    };
+  }
+
+  public getTags(): Observable<any> {
+    const key = 'manga_tags';
+
+    return this.request(key, this.http.get(`${BASE_URL}/manga/tag`));
+  }
+
   public getAllMangas(offset: number, genres: string[] = []): Observable<any> {
-    const params: any = {
+    const params: any = this.baseParams({
       limit: 35,
       offset,
       'order[latestUploadedChapter]': 'desc',
-      hasAvailableChapters: 'true',
-      'contentRating[]': ['suggestive', 'safe'],
-    };
+    });
     if (genres.length) params['includedTags[]'] = genres;
-    return this.request(
-      `allMangas_${offset}_${genres.join(',')}`,
-      this.http.get(`${BASE_URL}/manga`, { params }),
-    );
+    const key = `allMangas_${offset}_${genres.join(',')}_${this.mangadexLang}_${this.contentRatings.join(',')}`;
+    return this.request(key, this.http.get(`${BASE_URL}/manga`, { params }));
   }
 
   public getPopularMangas(): Observable<any> {
+    const key = `popularMangas_${this.mangadexLang}_${this.contentRatings.join(',')}`;
     return this.request(
-      'popularMangas',
+      key,
       this.http.get(`${BASE_URL}/manga`, {
-        params: {
+        params: this.baseParams({
           limit: 12,
           offset: 0,
           'order[followedCount]': 'desc',
-          hasAvailableChapters: 'true',
-          'contentRating[]': ['suggestive', 'safe'],
-        },
+        }),
       }),
     );
   }
 
   public getRecentMangas(): Observable<any> {
+    const key = `recentMangas_${this.mangadexLang}_${this.contentRatings.join(',')}`;
     return this.request(
-      'recentMangas',
+      key,
       this.http.get(`${BASE_URL}/manga`, {
-        params: {
+        params: this.baseParams({
           limit: 12,
           offset: 0,
           'order[latestUploadedChapter]': 'desc',
-          hasAvailableChapters: 'true',
-          'contentRating[]': ['suggestive', 'safe'],
-        },
+        }),
       }),
     );
   }
@@ -102,10 +138,11 @@ export class GetMangaService {
   }
 
   public getMangaByTitle(title: string): Observable<any> {
+    const key = `manga_title_${title}_${this.mangadexLang}_${this.contentRatings.join(',')}`;
     return this.request(
-      `manga_title_${title}`,
-      this.http.get(`${BASE_URL}/manga/`, {
-        params: new HttpParams().set('title', title),
+      key,
+      this.http.get(`${BASE_URL}/manga`, {
+        params: this.baseParams({ title, limit: 10 }),
       }),
     );
   }
@@ -128,7 +165,7 @@ export class GetMangaService {
     };
     if (language) params['translatedLanguage[]'] = language;
     return this.request(
-      `chapters_${id_manga}_${page}_${order}_${language || ''}`,
+      `chapters_${id_manga}_${page}_${order}_${language ?? ''}`,
       this.http.get(`${BASE_URL}/chapter?manga=${id_manga}`, { params }),
     );
   }
@@ -160,8 +197,8 @@ export class GetMangaService {
 
   public getMangaTitle(mangaItem: any): string {
     return (
-      mangaItem.attributes.title.en ??
-      (Object.values(mangaItem.attributes.title)[0] as string) ??
+      mangaItem?.attributes.title.en ??
+      (Object.values(mangaItem?.attributes.title)[0] as string) ??
       'Unknown'
     );
   }
