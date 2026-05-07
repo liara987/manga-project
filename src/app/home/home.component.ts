@@ -4,10 +4,10 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
-  effect,
   signal,
 } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { CardComponent, typeCard } from '../card/card.component';
 import { CarouselComponent } from '../carousel/carousel.component';
 import { GoToTopComponent } from '../go-to-top/go-to-top.component';
@@ -56,21 +56,17 @@ export class HomeComponent implements OnInit {
     private mangaService: GetMangaService,
     public i18nService: I18nService,
     private cdr: ChangeDetectorRef,
-  ) {
-    // Re-fetch when language changes
-    effect(() => {});
-  }
+  ) {}
 
   ngOnInit(): void {
-    this.i18nService.lang(); // track signal
     this.mangaService.clearCache();
     this.page = 0;
     this.loadSections();
     this.getManga();
     this.getTags();
-  } // handled by effect
+  }
 
-  getTags() {
+  getTags(): void {
     this.mangaService.getTags().subscribe((res) => {
       const genres = res.data
         .filter((tag: any) => ['genre', 'theme'].includes(tag.attributes.group))
@@ -78,7 +74,6 @@ export class HomeComponent implements OnInit {
           id: tag.id,
           name: tag.attributes.name.en,
         }));
-
       this.allGenres.set(genres);
     });
   }
@@ -96,111 +91,48 @@ export class HomeComponent implements OnInit {
   }
 
   toggleRating(r: ContentRating): void {
-    const idx = this.activeRatings.indexOf(r);
-
-    if (idx >= 0)
-      this.mangaService.contentRatings = this.activeRatings.filter(
-        (x) => x !== r,
-      );
-    else this.mangaService.contentRatings = [...this.activeRatings, r];
+    const isActive = this.activeRatings.includes(r);
+    this.mangaService.contentRatings = isActive
+      ? this.activeRatings.filter((x) => x !== r)
+      : [...this.activeRatings, r];
     this.mangaService.clearCache();
     this.page = 0;
     this.getManga();
-  }
-
-  private mapItems(data: any): { items: typeCard[]; pending: number } {
-    const raw = this.mangaService.dedup(data.data ?? []);
-    const items: typeCard[] = [];
-    let pending = raw.length;
-    raw.forEach((mangaItem: any) => {
-      const coverId = this.mangaService.getCoverId(mangaItem);
-      this.mangaService.getCoverFileName(coverId).subscribe({
-        next: (cover: any) => {
-          items.push({
-            id: mangaItem.id,
-            image: this.mangaService.getMangaCover(
-              mangaItem.id,
-              cover.data?.attributes.fileName,
-            ),
-            title: this.mangaService.getMangaTitle(mangaItem),
-          });
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          pending--;
-        },
-      });
-    });
-    return { items, pending };
   }
 
   loadSections(): void {
     this.loadingSection.set(true);
     this.errorSection.set('');
 
-    let done = 0;
-    const finish = () => {
-      if (++done === 2) {
+    forkJoin({
+      popular: this.mangaService.getPopularMangas(),
+      recent: this.mangaService.getRecentMangas(),
+    }).subscribe({
+      next: ({ popular, recent }) => {
+        const popularRaw = this.mangaService.dedup(popular.data ?? []);
+        const recentRaw = this.mangaService.dedup(recent.data ?? []);
+
+        forkJoin({
+          popularCards: this.mangaService.buildCards(popularRaw),
+          recentCards: this.mangaService.buildCards(recentRaw),
+        }).subscribe({
+          next: ({ popularCards, recentCards }) => {
+            this.popularMangas.set(popularCards);
+            this.recentMangas.set(recentCards);
+            this.loadingSection.set(false);
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            this.errorSection.set('error');
+            this.loadingSection.set(false);
+            this.cdr.markForCheck();
+          },
+        });
+      },
+      error: () => {
+        this.errorSection.set('error');
         this.loadingSection.set(false);
         this.cdr.markForCheck();
-      }
-    };
-
-    this.mangaService.getPopularMangas().subscribe({
-      next: (data: any) => {
-        const items: typeCard[] = [];
-        const raw = this.mangaService.dedup(data.data ?? []);
-        raw.forEach((mangaItem: any) => {
-          const coverId = this.mangaService.getCoverId(mangaItem);
-          this.mangaService.getCoverFileName(coverId).subscribe({
-            next: (cover: any) => {
-              items.push({
-                id: mangaItem.id,
-                image: this.mangaService.getMangaCover(
-                  mangaItem.id,
-                  cover.data?.attributes.fileName,
-                ),
-                title: this.mangaService.getMangaTitle(mangaItem),
-              });
-              this.popularMangas.set([...items]);
-              this.cdr.markForCheck();
-            },
-          });
-        });
-        finish();
-      },
-      error: () => {
-        this.errorSection.set('error');
-        finish();
-      },
-    });
-
-    this.mangaService.getRecentMangas().subscribe({
-      next: (data: any) => {
-        const items: typeCard[] = [];
-        const raw = this.mangaService.dedup(data.data ?? []);
-        raw.forEach((mangaItem: any) => {
-          const coverId = this.mangaService.getCoverId(mangaItem);
-          this.mangaService.getCoverFileName(coverId).subscribe({
-            next: (cover: any) => {
-              items.push({
-                id: mangaItem.id,
-                image: this.mangaService.getMangaCover(
-                  mangaItem.id,
-                  cover.data?.attributes.fileName,
-                ),
-                title: this.mangaService.getMangaTitle(mangaItem),
-              });
-              this.recentMangas.set([...items]);
-              this.cdr.markForCheck();
-            },
-          });
-        });
-        finish();
-      },
-      error: () => {
-        this.errorSection.set('error');
-        finish();
       },
     });
   }
@@ -208,42 +140,37 @@ export class HomeComponent implements OnInit {
   getManga(append = false): void {
     this.loading.set(true);
     this.errorMain.set('');
+
     this.mangaService.getAllMangas(this.page, this.selectedGenres).subscribe({
       next: (mangaData: any) => {
-        const newItems: typeCard[] = [];
         const raw = this.mangaService.dedup(mangaData.data ?? []);
+
         if (raw.length === 0 && !append) {
           this.cardContent.set([]);
           this.loading.set(false);
           this.cdr.markForCheck();
           return;
         }
-        raw.forEach((mangaItem: any) => {
-          const coverId = this.mangaService.getCoverId(mangaItem);
-          this.mangaService.getCoverFileName(coverId).subscribe({
-            next: (cover: any) => {
-              newItems.push({
-                id: mangaItem.id,
-                image: this.mangaService.getMangaCover(
-                  mangaItem.id,
-                  cover.data?.attributes.fileName,
-                ),
-                title: this.mangaService.getMangaTitle(mangaItem),
-              });
-              this.cardContent.set(
-                append ? [...this.cardContent(), ...newItems] : [...newItems],
-              );
-              this.cdr.markForCheck();
-            },
-          });
+
+        this.mangaService.buildCards(raw).subscribe({
+          next: (newItems) => {
+            // Fix: snapshot existing cards before appending to prevent
+            // duplicate renders when cover responses arrive out of order.
+            this.cardContent.set(
+              append ? [...this.cardContent(), ...newItems] : newItems,
+            );
+            this.loading.set(false);
+            this.cdr.markForCheck();
+          },
+          error: () => {
+            this.errorMain.set('error');
+            this.loading.set(false);
+            this.cdr.markForCheck();
+          },
         });
       },
       error: () => {
         this.errorMain.set('error');
-        this.loading.set(false);
-        this.cdr.markForCheck();
-      },
-      complete: () => {
         this.loading.set(false);
         this.cdr.markForCheck();
       },
