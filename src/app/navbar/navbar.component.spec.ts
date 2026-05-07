@@ -2,13 +2,18 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { NavbarComponent } from './navbar.component';
 import { GetMangaService } from '../services/getManga.service';
 
 const makeCard = (id: string, title = `Manga ${id}`) => ({
   id, title, image: `/cover/${id}.jpg`,
+});
+
+const makeMangaItem = (id: string, title = `Manga ${id}`) => ({
+  id,
+  attributes: { title: { en: title } },
 });
 
 describe('NavbarComponent', () => {
@@ -53,7 +58,7 @@ describe('NavbarComponent', () => {
 
   it('should populate listResult and set showResults true when search finds cards', fakeAsync(() => {
     const cards = [makeCard('1'), makeCard('2')];
-    mangaService.getMangaByTitle.and.returnValue(of({ data: [{ id: '1' }, { id: '2' }] }));
+    mangaService.getMangaByTitle.and.returnValue(of({ data: [makeMangaItem('1'), makeMangaItem('2')] }));
     mangaService.buildCards.and.returnValue(of(cards));
 
     component.performSearch('Naruto');
@@ -76,7 +81,7 @@ describe('NavbarComponent', () => {
   }));
 
   it('should limit search results to 8 items', fakeAsync(() => {
-    const rawItems = Array.from({ length: 12 }, (_, i) => ({ id: `${i}` }));
+    const rawItems = Array.from({ length: 12 }, (_, i) => makeMangaItem(`${i}`));
     mangaService.getMangaByTitle.and.returnValue(of({ data: rawItems }));
     mangaService.dedup.and.callFake((items) => items);
     mangaService.buildCards.and.callFake((items) =>
@@ -92,8 +97,8 @@ describe('NavbarComponent', () => {
   }));
 
   it('should deduplicate search results before building cards', fakeAsync(() => {
-    const raw = [{ id: '1' }, { id: '2' }];
-    const deduped = [{ id: '1' }];
+    const raw = [makeMangaItem('1'), makeMangaItem('2')];
+    const deduped = [makeMangaItem('1')];
     mangaService.getMangaByTitle.and.returnValue(of({ data: raw }));
     mangaService.dedup.and.returnValue(deduped);
 

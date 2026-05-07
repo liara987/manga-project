@@ -88,8 +88,9 @@ describe('GetMangaService', () => {
   it('should use the first available title key when "en" is absent', () => {
     const items = [
       { id: '1', attributes: { title: { ja: 'ナルト' } } },
-      { id: '2', attributes: { title: { ja: 'なると' } } }, // same title lowercased
+      { id: '2', attributes: { title: { ja: 'ナルト' } } },
     ];
+
     expect(service.dedup(items as any)).toEqual([items[0]]);
   });
 
@@ -196,12 +197,16 @@ describe('GetMangaService', () => {
 
   it('should issue a new HTTP request after clearCache is called', () => {
     service.getTags().subscribe();
-    httpMock.expectOne('/api/manga/tag').flush({ data: [] });
+    const firstReq = httpMock.expectOne('/api/manga/tag');
+    expect(firstReq.request.url).toBe('/api/manga/tag');
+    firstReq.flush({ data: [] });
 
     service.clearCache();
 
     service.getTags().subscribe();
-    httpMock.expectOne('/api/manga/tag').flush({ data: [] });
+    const secondReq = httpMock.expectOne('/api/manga/tag');
+    expect(secondReq.request.url).toBe('/api/manga/tag');
+    secondReq.flush({ data: [] });
   });
 
   // ─── buildCards ─────────────────────────────────────────────────────────────
@@ -214,7 +219,10 @@ describe('GetMangaService', () => {
   });
 
   it('should resolve all covers in parallel and map items to typeCard[]', (done) => {
-    const items = [makeMangaItem('Naruto', 'manga-1'), makeMangaItem('Bleach', 'manga-2')];
+    const items = [
+      makeMangaItem('Naruto', 'manga-1'),
+      makeMangaItem('Bleach', 'manga-2'),
+    ];
 
     service.buildCards(items).subscribe((cards) => {
       expect(cards.length).toBe(2);
@@ -231,8 +239,12 @@ describe('GetMangaService', () => {
       done();
     });
 
-    httpMock.expectOne('/api/cover/cover-manga-1').flush(makeCoverResponse('manga-1'));
-    httpMock.expectOne('/api/cover/cover-manga-2').flush(makeCoverResponse('manga-2'));
+    httpMock
+      .expectOne('/api/cover/cover-manga-1')
+      .flush(makeCoverResponse('manga-1'));
+    httpMock
+      .expectOne('/api/cover/cover-manga-2')
+      .flush(makeCoverResponse('manga-2'));
   });
 
   it('should use cached cover responses in buildCards', (done) => {
@@ -240,7 +252,9 @@ describe('GetMangaService', () => {
 
     // Pre-warm the cache
     service.getCoverFileName('cover-manga-1').subscribe();
-    httpMock.expectOne('/api/cover/cover-manga-1').flush(makeCoverResponse('manga-1'));
+    httpMock
+      .expectOne('/api/cover/cover-manga-1')
+      .flush(makeCoverResponse('manga-1'));
 
     service.buildCards(items).subscribe((cards) => {
       expect(cards.length).toBe(1);

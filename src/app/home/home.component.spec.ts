@@ -14,25 +14,20 @@ const makeCard = (id: string) => ({
 });
 
 function makeMangaServiceSpy() {
-  return jasmine.createSpyObj<GetMangaService>(
-    'GetMangaService',
-    [
-      'clearCache',
-      'getTags',
-      'getAllMangas',
-      'getPopularMangas',
-      'getRecentMangas',
-      'dedup',
-      'buildCards',
-      'getCoverId',
-      'getCoverFileName',
-      'getMangaCover',
-      'getMangaTitle',
-    ],
-    {
-      contentRatings: ['safe'],
-    },
-  );
+  return jasmine.createSpyObj<GetMangaService>('GetMangaService', [
+    'clearCache',
+    'getTags',
+    'getAllMangas',
+    'getPopularMangas',
+    'getRecentMangas',
+    'getMangaByTitle',
+    'dedup',
+    'buildCards',
+    'getCoverId',
+    'getCoverFileName',
+    'getMangaCover',
+    'getMangaTitle',
+  ]);
 }
 
 describe('HomeComponent', () => {
@@ -45,6 +40,9 @@ describe('HomeComponent', () => {
 
   beforeEach(async () => {
     mangaService = makeMangaServiceSpy();
+    mangaService.contentRatings = ['safe'];
+    mangaService.getMangaByTitle.and.returnValue(of({ data: [] }));
+
     mangaService.getTags.and.returnValue(of(defaultTagsResponse));
     mangaService.getAllMangas.and.returnValue(of(defaultMangaResponse));
     mangaService.getPopularMangas.and.returnValue(of(defaultMangaResponse));
@@ -187,7 +185,9 @@ describe('HomeComponent', () => {
       of({ data: [{ id: '1' }] }),
       of({ data: [{ id: '2' }] }),
     );
-    mangaService.buildCards.and.returnValues(of(page1Cards), of(page2Cards));
+    mangaService.buildCards.and.callFake((items: any[]) =>
+      of(items.map((i) => makeCard(i.id))),
+    );
 
     fixture.detectChanges(); // initial load
     expect(component.cardContent()).toEqual(page1Cards);
@@ -201,14 +201,13 @@ describe('HomeComponent', () => {
   });
 
   it('should not duplicate existing cards when showMore is called', () => {
-    const page1Cards = [makeCard('1'), makeCard('2')];
-    const page2Cards = [makeCard('3')];
-
     mangaService.getAllMangas.and.returnValues(
       of({ data: [{ id: '1' }, { id: '2' }] }),
       of({ data: [{ id: '3' }] }),
     );
-    mangaService.buildCards.and.returnValues(of(page1Cards), of(page2Cards));
+    mangaService.buildCards.and.callFake((items: any[]) =>
+      of(items.map((i) => makeCard(i.id))),
+    );
 
     fixture.detectChanges();
     component.showMore();
@@ -251,20 +250,20 @@ describe('HomeComponent', () => {
   // ─── Content rating ──────────────────────────────────────────────────────────
 
   it('should add a rating to the active set when it is not already active', () => {
-    (mangaService as any).contentRatings = ['safe'];
+    mangaService.contentRatings = ['safe'];
     component.toggleRating('suggestive');
     expect(mangaService.contentRatings).toContain('suggestive');
   });
 
   it('should remove a rating from the active set when it is already active', () => {
-    (mangaService as any).contentRatings = ['safe', 'suggestive'];
+    mangaService.contentRatings = ['safe', 'suggestive'];
     component.toggleRating('suggestive');
     expect(mangaService.contentRatings).not.toContain('suggestive');
   });
 
   it('should reset page and re-fetch manga on rating toggle', () => {
     component.page = 35;
-    (mangaService as any).contentRatings = ['safe'];
+    mangaService.contentRatings = ['safe'];
     component.toggleRating('erotica');
     expect(component.page).toBe(0);
     expect(mangaService.clearCache).toHaveBeenCalled();
