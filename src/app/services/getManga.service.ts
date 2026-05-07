@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, of, shareReplay } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, forkJoin, of, shareReplay } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { typeCard } from '../card/card.component';
 import { I18nService } from './i18n.service';
 
 const BASE_URL = '/api';
@@ -25,7 +26,7 @@ interface CacheEntry<T> {
 
 @Injectable({ providedIn: 'root' })
 export class GetMangaService {
-  public contentRatings: ContentRating[] = [];
+  public contentRatings: ContentRating[] = ['safe'];
 
   private cache = new Map<string, CacheEntry<any>>();
   private inFlight = new Map<string, Observable<any>>();
@@ -75,6 +76,31 @@ export class GetMangaService {
       seen.add(title);
       return true;
     });
+  }
+
+  /**
+   * Resolves cover art for a list of raw manga items and maps them to typeCard[].
+   * Centralises the cover-fetch pattern used by HomeComponent and NavbarComponent.
+   * Uses forkJoin so all covers are fetched in parallel and resolved atomically.
+   */
+  buildCards(mangaItems: any[]): Observable<typeCard[]> {
+    if (!mangaItems.length) return of([]);
+
+    const cardRequests = mangaItems.map((mangaItem) => {
+      const coverId = this.getCoverId(mangaItem);
+      return this.getCoverFileName(coverId).pipe(
+        map((cover: any) => ({
+          id: mangaItem.id,
+          title: this.getMangaTitle(mangaItem),
+          image: this.getMangaCover(
+            mangaItem.id,
+            cover.data?.attributes.fileName,
+          ),
+        })),
+      );
+    });
+
+    return forkJoin(cardRequests);
   }
 
   private baseParams(extra: Record<string, any> = {}): Record<string, any> {

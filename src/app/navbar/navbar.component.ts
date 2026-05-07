@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
+  OnInit,
   Renderer2,
   ViewChild,
   computed,
@@ -21,9 +23,9 @@ import { ThemeService } from '../services/theme.service';
   imports: [RouterModule, FormsModule, CommonModule],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush, // OnPush = 2
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   @ViewChild('searchInput') searchInput!: ElementRef;
   @ViewChild('resultsDropdown') resultsDropdown!: ElementRef;
 
@@ -32,7 +34,9 @@ export class NavbarComponent {
   listResult: { id: string; title: string; image: string }[] = [];
   isMenuOpen = false;
   isSearchOpen = false;
+
   private searchSubject = new Subject<string>();
+
   favCount = computed(() => this.favoritesService.favorites().length);
   currentTheme = computed(() => this.themeService.theme());
   currentLang = computed(() => this.i18nService.lang());
@@ -52,6 +56,7 @@ export class NavbarComponent {
     public themeService: ThemeService,
     public favoritesService: FavoritesService,
     public i18nService: I18nService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -93,27 +98,15 @@ export class NavbarComponent {
   performSearch(title: string): void {
     this.mangaService.getMangaByTitle(title).subscribe({
       next: (mangaData: any) => {
-        this.listResult = [];
-        this.mangaService
+        const dedupedItems = this.mangaService
           .dedup(mangaData.data ?? [])
-          .slice(0, 8)
-          .forEach((mangaItem: any) => {
-            const coverId = this.mangaService.getCoverId(mangaItem);
-            this.mangaService
-              .getCoverFileName(coverId)
-              .subscribe((cover: any) => {
-                const fileName = cover.data?.attributes.fileName;
-                const mangaID = cover.data.relationships.find(
-                  ({ type }: any) => type === 'manga',
-                ).id;
-                this.listResult.push({
-                  id: mangaItem.id,
-                  title: this.mangaService.getMangaTitle(mangaItem),
-                  image: this.mangaService.getMangaCover(mangaID, fileName),
-                });
-                this.showResults = true;
-              });
-          });
+          .slice(0, 8);
+
+        this.mangaService.buildCards(dedupedItems).subscribe((cards) => {
+          this.listResult = cards;
+          this.showResults = cards.length > 0;
+          this.cdr.markForCheck();
+        });
       },
     });
   }
@@ -131,17 +124,21 @@ export class NavbarComponent {
   toggleTheme(): void {
     this.themeService.toggle();
   }
+
   setLang(lang: AppLanguage): void {
     this.i18nService.setLang(lang);
   }
+
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
+
   toggleSearch(): void {
     this.isSearchOpen = !this.isSearchOpen;
     if (this.isSearchOpen)
       setTimeout(() => this.searchInput?.nativeElement.focus(), 100);
   }
+
   trackById(_: number, item: any): string {
     return item.id;
   }
