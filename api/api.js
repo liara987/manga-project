@@ -17,8 +17,10 @@ module.exports = async (req, res) => {
     const response = await fetch(fullTarget, {
       headers: {
         Referer: "https://mangadex.org",
-        "User-Agent": "Mozilla/5.0",
-        "Accept-Encoding": "application/json",
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/138.0.0.0 Safari/537.36",
+        Accept: "application/json",
+        "Accept-Language": "en-US,en;q=0.9",
       },
     });
 
