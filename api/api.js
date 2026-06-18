@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
       headers: {
         Referer: "https://mangadex.org",
         "User-Agent": "Mozilla/5.0",
-        "Accept-Encoding": "identity",
+        "Accept-Encoding": "application/json",
       },
     });
 
