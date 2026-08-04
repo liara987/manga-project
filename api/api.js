@@ -23,8 +23,8 @@ module.exports = async (req, res) => {
       const response = await fetch(fullTarget, {
         keepalive: false,
         headers: {
-          Referer: "https://mangadex.org",
-          "User-Agent": "Mozilla/5.0 (compatible; manga-project/1.0)",
+          "User-Agent":
+            "manga-project/1.0 (+https://manga-project-w833.vercel.app)",
           "Accept-Encoding": "identity",
           Connection: "close",
         },
