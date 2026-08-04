@@ -11,27 +11,25 @@ module.exports = async (req, res) => {
 
   try {
     const response = await fetch(fullTarget, {
+      keepalive: false,
       headers: {
         Referer: "https://mangadex.org",
-        "User-Agent": "Mozilla/5.0",
+        "User-Agent": "Mozilla/5.0 (compatible; manga-project/1.0)",
         "Accept-Encoding": "identity",
+        Connection: "close",
       },
     });
 
-    const BLOCKED_HEADERS = [
-      "transfer-encoding",
-      "connection",
-      "content-encoding",
-    ];
-    response.headers.forEach((value, key) => {
-      if (!BLOCKED_HEADERS.includes(key.toLowerCase())) {
-        res.setHeader(key, value);
-      }
-    });
+    const buffer = Buffer.from(await response.arrayBuffer());
 
-    const buffer = await response.arrayBuffer();
-    res.status(response.status).end(Buffer.from(buffer));
+    // Only forward the headers we actually need; never trust upstream
+    // content-length/transfer-encoding/connection framing on our own response.
+    const contentType = response.headers.get("content-type");
+    if (contentType) res.setHeader("Content-Type", contentType);
+    res.setHeader("Content-Length", buffer.length);
+
+    res.status(response.status).end(buffer);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(502).json({ error: err.message });
   }
 };

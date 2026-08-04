@@ -1,5 +1,3 @@
-const https = require("https");
-
 module.exports = async (req, res) => {
   const targetPath = req.url.replace(/^\/api/, ""); // → /manga?limit=96&offset=1&...
   const fullTarget = `https://api.mangadex.org${targetPath}`; // query string já inclusa
@@ -13,31 +11,62 @@ module.exports = async (req, res) => {
     return;
   }
 
-  try {
-    const response = await fetch(fullTarget, {
-      headers: {
-        Referer: "https://mangadex.org",
-        "User-Agent": "Mozilla/5.0",
-        "Accept-Encoding": "identity",
-      },
-    });
+  const MAX_ATTEMPTS = 3;
+  let lastErr;
 
-    const data = await response.text();
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      // `keepalive: false` avoids handing this request a socket that Vercel's
+      // frozen/thawed Lambda kept "alive" but the remote side already closed —
+      // that's what causes silent, partial bodies (no thrown error, just a
+      // truncated string) instead of a clean connection error.
+      const response = await fetch(fullTarget, {
+        keepalive: false,
+        headers: {
+          Referer: "https://mangadex.org",
+          "User-Agent": "Mozilla/5.0 (compatible; manga-project/1.0)",
+          "Accept-Encoding": "identity",
+          Connection: "close",
+        },
+      });
 
-    const BLOCKED_HEADERS = [
-      "transfer-encoding",
-      "connection",
-      "content-encoding",
-      "content-length",
-    ];
-    response.headers.forEach((value, key) => {
-      if (!BLOCKED_HEADERS.includes(key.toLowerCase())) {
-        res.setHeader(key, value);
+      const raw = await response.text();
+
+      if (!response.ok) {
+        // Pass upstream errors through as-is (already valid JSON from MangaDex).
+        res.setHeader("Content-Type", "application/json; charset=utf-8");
+        res.status(response.status).end(raw);
+        return;
       }
-    });
 
-    res.status(response.status).end(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+      // Validate the body is actually complete, well-formed JSON before
+      // trusting it. A truncated fetch produces a SyntaxError here instead
+      // of silently forwarding broken data to the browser.
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (parseErr) {
+        lastErr = parseErr;
+        if (attempt < MAX_ATTEMPTS) continue; // retry on truncation
+        throw new Error(
+          `Upstream returned incomplete JSON after ${MAX_ATTEMPTS} attempts: ${parseErr.message}`,
+        );
+      }
+
+      // Re-serialize ourselves so Content-Length is computed by Node from
+      // the exact bytes we're about to write — never forwarded from upstream.
+      res.setHeader("Content-Type", "application/json; charset=utf-8");
+      res.status(response.status).json(parsed);
+      return;
+    } catch (err) {
+      lastErr = err;
+      if (attempt === MAX_ATTEMPTS) {
+        res.status(502).json({
+          error: "Failed to fetch valid response from MangaDex",
+          detail: err.message,
+        });
+        return;
+      }
+    }
   }
 };
