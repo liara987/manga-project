@@ -28,6 +28,7 @@ module.exports = async (req, res) => {
       "transfer-encoding",
       "connection",
       "content-encoding",
+      "content-length",
     ];
     response.headers.forEach((value, key) => {
       if (!BLOCKED_HEADERS.includes(key.toLowerCase())) {
