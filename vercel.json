@@ -3,17 +3,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/manga-project/browser",
   "framework": "angular",
-   "functions": {
-    "api/api.js": {
-      "runtime": "nodejs18.x"
-    },
-    "api/cover.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
   "rewrites": [
-    { "source": "/api/(.)", "destination": "/api/api" },
-    { "source": "/cover/(.)", "destination": "/api/cover" },
+    { "source": "/api/(.*)", "destination": "/api/api" },
+    { "source": "/cover/(.*)", "destination": "/api/cover" },
     { "source": "/((?!api|cover).*)", "destination": "/index.html" }
   ]
 }
